@@ -1,0 +1,6 @@
+opencv-python
+keras
+seaborn
+numpy
+youtube_dl
+pafy
