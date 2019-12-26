@@ -1,3 +1,4 @@
 *OLD*
 *.h5
 .ipynb_checkpoints/
+.DS_Store
