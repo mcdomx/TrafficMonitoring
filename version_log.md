@@ -1,6 +1,6 @@
 # Traffic Detection Version Log
 -
-### v0.1 - Init Relase
+### v1.0 - Init Relase
 
 Features:
 
@@ -8,3 +8,11 @@ Features:
 * Includes a Jupyter Notebook for development
 * Supports Google Streams and Video
 * Supports web
+
+### v2.0 - Update
+
+Changes:
+
+* better use of object oriented design with classes
+* create 'log-only' mode where no video is displayed
+* enable snap shots based on conditional presence of object
