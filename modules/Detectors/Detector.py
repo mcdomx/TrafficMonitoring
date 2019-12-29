@@ -10,5 +10,15 @@ class Detector(ABC):
         - returns the frame number and frame with detections
     """
 
+    def __init__(self, name):
+        self.__name = name
+
+    def getName(self):
+        return self.__name
+
     def detect(self, frame_num: int, frame: np.array) -> (int, np.array, list):
+        """
+        Each supported detector must override this method.
+        """
         ...
+

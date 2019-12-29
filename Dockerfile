@@ -1,10 +1,11 @@
 FROM tensorflow/tensorflow:1.13.2-py3-jupyter
+#FROM tensorflow/tensorflow:1.15.0-py3-jupyter # lots fo depreciaton warnings - tls error exists
+#FROM tensorflow/tensorflow:2.1.0rc2-gpu-py3-jupyter # DOESNT WORK
 
 RUN apt-get update
 RUN apt-get install -y libsm6 libxext6 libfontconfig1 libxrender1 wget
 RUN apt-get install nano
 RUN apt-get install -qqy x11-apps
-CMD xeyes
 
 RUN pip3 install --upgrade pip
 
@@ -22,7 +23,9 @@ RUN pip3 install https://github.com/OlafenwaMoses/ImageAI/releases/download/2.0.
 
 # Copy python code and custom objects file
 COPY ./capture_video.py .
+COPY ./modules ./modules
 COPY ./custom_objects.json .
+COPY ./monitor_objects.json .
 
 # Make a log directory
 CMD mkdir /app/logdir

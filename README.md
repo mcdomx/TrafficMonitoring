@@ -14,6 +14,8 @@ This project relies on an ImageAI implementation of instance detection. (
 
 ### Setup and Exection
 
+If you have already setup XServer and socat, you can skip to step 4.
+
 **1.** Set local IP reference
 
 	export LOCALIP=<local IP address>
@@ -46,8 +48,15 @@ ref: <a href=https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc>
 
 **4.** Build and run the docker image from the root of the project directory where the `Docker` and this README.md files are located.
 
-	docker build -t tf_detection .
+If Xserver and socat are already installed, you can start here.  Make sure that xserver is running and that your localIP is saved as an environment variable:
+
+	export LOCALIP=<local IP address>
+	xhost +$LOCALIP
 	
+
+Now build the docker container and run:
+
+	docker build -t tf_detection .
 	docker run -u $(id -u):$(id -g) -it --name traffic_monitor --net=host --rm -e DISPLAY=$LOCALIP:0  -e CAM_STREAM="0" -e LOGGING="True" -e LOG_FILEPATH="./logdir/camlogs.txt" -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v "$PWD"/logdir:/app/logdir tf_detection
 
 Supported environment variables:<br>
@@ -62,7 +71,7 @@ Supported environment variables:<br>
 | MODEL             | String      | -e MODEL="tinyyolo" <br> -e MODEL="yolo"       | The name of the model to be used for inference. "yolo" is default. Only "yolo" and "tinyyolo" are supported.
 | DPM               | int(String)| -e DPM="20"       | Detections per Minute.  Default is 20.  Value will auto-adjust based on the local computer's ability to process.
 | DISPLAY_FPS       | int(String)| -e DISPLAY_FPS ="30"       | The displayed frame rate.  Default is "30".  Will be set to the video's FPS if the DISPLAY_FPS is greater than the video.
-
+| MONITORING        | Bool(String)| -e MONITORING="True" | Default="True". Will save images of captured objects according to object names saved in the `monitor_list.txt` file.
 
 
 		

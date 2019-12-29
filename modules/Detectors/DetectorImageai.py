@@ -1,79 +1,96 @@
 from imageai.Detection import VideoObjectDetection
 from imageai.Detection import ObjectDetection
-from Detectors import Detector
+from modules.Detectors.Detector import Detector
 import os
 import numpy as np
 import cv2
 import json
 
 
-class Detector_Imageai(Detector):
+def get_detector(model_name: str, det_type: str = 'image'):
+    """
+    Returns a ObjectDetection(default) or VideoObjectDetection
+    object based on the det_type provided ('image' or 'video').
+    Returned object will be loaded and ready to detect.
+    """
+    print("initializing model ...", end="\r")
+
+    # Setup Detector Object andInference Model
+    execution_path = os.getcwd()
+
+    if det_type == 'video':
+        detector = VideoObjectDetection()
+    else:
+        detector = ObjectDetection()
+
+    # Set model path
+    if model_name == "tinyyolo":
+        detector.setModelTypeAsTinyYOLOv3()
+        cur_dir = os.path.join(execution_path, "backbones", "yolo-tiny.h5")
+    elif model_name == "retinanet":
+        detector.setModelTypeAsRetinaNet()
+        cur_dir = os.path.join(execution_path, "backbones", "resnet50_coco_best_v2.0.1.h5")
+    else:
+        detector.setModelTypeAsYOLOv3()
+        cur_dir = os.path.join(execution_path, "backbones", "yolo.h5")
+    detector.setModelPath(os.path.join(cur_dir))
+
+    # load model
+    detector.loadModel()
+
+    print("{:90}".format(" "), end='\r')  # clear line
+    print("'{}' model initialized!".format(model_name))
+
+    return detector
+
+
+class DetectorImageai(Detector):
     """
     Implements Detector abstract class.
 
     Sets the object detection with the ImageAI implementation (http://imageai.org)
     ref: https://imageai.readthedocs.io/en/latest/detection/index.html
     """
-    def __init__(self):
-        self.detector = self.get_detector(os.getenv("MODEL", "yolo"), det_type='image')
-        self.custom_objects = self.load_custom_objects()
+    def __init__(self, name='ImageAI_Detector'):
+        Detector.__init__(self, name)
+        self.name = name
+        self.detector = get_detector(os.getenv("MODEL", "yolo"), det_type='image')
+        self.custom_objects = self.get_custom_objects()
 
     def detect(self, frame_num: int, frame: np.array) -> (int, np.array, list):
         """
-        Required method of Detector.
+        Required method of abstract class Detector.
         Arguments include frame number and frame.
         Returns frame_number, detection overlayed frame and detection statistics
         """
-        # Perform detection on frame
-        det_frame, detections = self.detector.detectCustomObjectsFromImage(
-            custom_objects=self.custom_objects,
-            input_type="array",
-            minimum_percentage_probability=60,
-            input_image=frame,
-            output_type="array")
 
-        cv2.putText(det_frame, "{}".format("counting detections.."), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.4,
-                    (0, 200, 0), 1)
+        # Perform detection on frame
+        det_frame = detections = None
+
+        try:
+            if self.custom_objects is None:
+                det_frame, detections = self.detector.detectObjectsFromImage(
+                    input_type="array",
+                    minimum_percentage_probability=60,
+                    input_image=frame,
+                    output_type="array")
+            else:
+                det_frame, detections = self.detector.detectCustomObjectsFromImage(
+                    custom_objects=self.custom_objects,
+                    input_type="array",
+                    minimum_percentage_probability=60,
+                    input_image=frame,
+                    output_type="array")
+
+            cv2.putText(det_frame, "{}".format("counting detections.."), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.4,
+                        (0, 200, 0), 1)
+
+        except Exception as e:
+            print("{} // detect(): {}".format(self.name, e))
 
         return frame_num, det_frame, detections
 
-    def get_detector(self, model_name: str, det_type: str = 'image') -> VideoObjectDetection:
-        """
-        Returns a ObjectDetection(default) or VideoObjectDetection
-        object based on the det_type provided ('image' or 'video').
-        Returned object will be loaded and ready to detect.
-        """
-        print("initializing model ...", end="\r")
-
-        # Setup Detector Object andInference Model
-        execution_path = os.getcwd()
-
-        if det_type == 'video':
-            detector = VideoObjectDetection()
-        else:
-            detector = ObjectDetection()
-
-        # Set model path
-        if model_name == "tinyyolo":
-            detector.setModelTypeAsTinyYOLOv3()
-            cur_dir = os.path.join(execution_path, "backbones", "yolo-tiny.h5")
-        elif model_name == "retinanet":
-            detector.setModelTypeAsRetinaNet()
-            cur_dir = os.path.join(execution_path, "backbones", "resnet50_coco_best_v2.0.1.h5")
-        else:
-            detector.setModelTypeAsYOLOv3()
-            cur_dir = os.path.join(execution_path, "backbones", "yolo.h5")
-        detector.setModelPath(os.path.join(cur_dir))
-
-        # load model
-        detector.loadModel()
-
-        print("{:90}".format(" "), end='\r')  # clear line
-        print("'{}' model initialized!".format(model_name))
-
-        return detector
-
-    def load_custom_objects(self) -> dict:
+    def get_custom_objects(self):
         """
         There are 80 possible objects that you can detect with the
         ObjectDetection class, and they are as seen below.
@@ -97,20 +114,24 @@ class Detector_Imageai(Detector):
         Load custom objects file from custom_objects.json' file.
         If file read fails, set all objects to detectable.
         """
-        print("loading custom objects ...", end='\r')
+        print("loading custom objects ...", end='')
 
-        json_file = os.path.join(".", 'custom_objects.json')
-
+        custom_objects = None
         try:
             with open('custom_objects.json', 'r') as fp:
                 custom_objects = json.load(fp)
-        except:
+            print("Loaded custom objects from file!")
+        except FileNotFoundError:
             # set all objects to valid if file read doesn't work
+            print("No custom object file found.  Using all objects.")
             custom_objects = self.detector.CustomObjects()
             for k, v in custom_objects.items():
                 custom_objects[k] = 'valid'
+        except Exception as e:
+            print("Unable to set custom objects: ".format(e))
+            return None
 
         print("{:90}".format(" "), end='\r')  # clear line
         print("custom objects loaded!")
-
         return custom_objects
+
