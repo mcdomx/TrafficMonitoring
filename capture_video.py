@@ -49,7 +49,8 @@ def stream_object_detection():
             t.join()  # wait until it is stopped
             print("'{}' closed!     ".format(t.getName()))
 
-    def add_overlay(frame: np.array, stats:str) -> np.array:
+    # def add_overlay(frame: np.array, stats:dict = None) -> np.array:
+    def add_overlay() -> np.array:
         # frame[frame.shape[0] - 10: frame.shape[0] - 30, 10:20] = np.int(frame[frame.shape[0] - 10: frame.shape[0] - 30, 10:20] / 2)
         # HELP MENU
         cv2.putText(frame, "{}".format("'q' - quit"),
@@ -61,12 +62,13 @@ def stream_object_detection():
 
         # STATISTICS
         # cv2.putText(frame, "{}".format("dpm: {}".format(round(capture_thread.get_dpm(), 1))),
-        cv2.putText(frame, "{}".format(stats),
-                    (frame.shape[1] - 80, frame.shape[0] - 10),
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.4,
-                    color=(0, 200, 0),
-                    thickness=1)
+        for i, (k, v) in enumerate(stats.items()):
+            cv2.putText(frame, "{:6} : {}".format(k, round(v, 3)),
+                        (frame.shape[1] - 100, frame.shape[0] - 10 - (i*15)),
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=0.4,
+                        color=(0, 200, 0),
+                        thickness=1)
 
     # set display window title bar text
     window_name = "Traffic Monitor"
@@ -151,8 +153,10 @@ def stream_object_detection():
             last_display_time = elapsed_time()
 
             # frame overlay
-            stats = "dpm: {}\ndelay: {}".format(round(capture_thread.get_dpm(), 1), t_delay)
-            add_overlay(frame, stats=stats)
+            stats = {}
+            stats['dpm'] = round(capture_thread.get_dpm(), 1)
+            stats['delay'] = t_delay
+            add_overlay()
 
             # update window
             cv2.imshow(window_name, frame)
