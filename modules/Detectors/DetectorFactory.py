@@ -3,7 +3,7 @@ from modules.Detectors.Detector import Detector
 from modules.Detectors.DetectorImageai import DetectorImageai
 
 
-class DetectorFactory():
+class DetectorFactory:
 
     @staticmethod
     def get() -> Detector:

@@ -64,14 +64,15 @@ Supported environment variables:<br>
 |  Variable Name    | Type        | Usage Example    | Description      | 
 | :---------------- | :---------- | :--------------- | :--------------- | 
 | CAM_STREAM        | String      | -e CAM\_STREAM='http://pidev1.local:8080/?action=stream'<br>-e CAM\_STREAM='https://www.youtube.com/1EiC9bvVGnk'<br>-e CAM\_STREAM='1EiC9bvVGnk'<br>-e CAM_STREAM="0"| URL of the webcam stream.  Can also be a YouTube video.  The YouTube path of 11-digit ID can be used. A numeric value is cast to an integer so "0" becomes 0 and uses the computer's built-in camera.|
-| LOGGING        | Bool(String)| -e LOGGING="True"      | "True" or "False".  Default="False.   Whether or not to log detections to output file.
+| LOGGING           | Bool(String)| -e LOGGING="True"      | "True" or "False".  Default="False.   Whether or not to log detections to output file.
 | LOG_FILEPATH      | String      | -e LOG_FILEPATH="./logdir/| The local path where log file should be saved.  Ignored if LOG_STREAM is "False".
 | DETECTION         | Bool(String)| -e DETECTION="True"       | "True" of "False".  Whethre or not to perform inference.  If "False", real-time video stream is displayed with no inference overlay.
-| DETECTOR          | String     | -e DETECTOR="imageai"       | Name of detector to use.  Default 'imageai'.  Currently only 'imageai' is supported.
+| DETECTOR          | String      | -e DETECTOR="imageai"       | Name of detector to use.  Default 'imageai'.  Currently only 'imageai' is supported.
 | MODEL             | String      | -e MODEL="tinyyolo" <br> -e MODEL="yolo"       | The name of the model to be used for inference. "yolo" is default. Only "yolo" and "tinyyolo" are supported.
-| DPM               | int(String)| -e DPM="20"       | Detections per Minute.  Default is 20.  Value will auto-adjust based on the local computer's ability to process.
-| DISPLAY_FPS       | int(String)| -e DISPLAY_FPS ="30"       | The displayed frame rate.  Default is "30".  Will be set to the video's FPS if the DISPLAY_FPS is greater than the video.
+| DPM               | int(String) | -e DPM="20"       | Detections per Minute.  Default is 20.  Value will auto-adjust based on the local computer's ability to process.
+| DISPLAY_FPS       | int(String) | -e DISPLAY_FPS ="30"       | The displayed frame rate.  Default is "30".  Will be set to the video's FPS if the DISPLAY_FPS is greater than the video.
 | MONITORING        | Bool(String)| -e MONITORING="True" | Default="True". Will save images of captured objects according to object names saved in the `monitor_list.txt` file.
+| SHOW_VIDEO        | Bool(String)| -e SHOW_VIDEO="True" | Default="True". Will save display video stream including detection overlays.
 
 
 		

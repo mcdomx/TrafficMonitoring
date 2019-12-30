@@ -51,6 +51,12 @@ def stream_object_detection():
 
     # def add_overlay(frame: np.array, stats:dict = None) -> np.array:
     def add_overlay() -> np.array:
+        """
+        Adds overly to current 'frame'.  Uses local variables
+        stats and frame.  'stats' is a dictionary
+        where keys are displayed statistics and values are the
+        respective values.
+        """
         # frame[frame.shape[0] - 10: frame.shape[0] - 30, 10:20] = np.int(frame[frame.shape[0] - 10: frame.shape[0] - 30, 10:20] / 2)
         # HELP MENU
         cv2.putText(frame, "{}".format("'q' - quit"),
@@ -152,39 +158,41 @@ def stream_object_detection():
 
             last_display_time = elapsed_time()
 
-            # frame overlay
-            stats = {}
-            stats['dpm'] = round(capture_thread.get_dpm(), 1)
-            stats['delay'] = t_delay
-            add_overlay()
+            if os.getenv("SHOW_VIDEO", "True") == "True":
 
-            # update window
-            cv2.imshow(window_name, frame)
+                # frame overlay
+                stats = {}
+                stats['dpm'] = round(capture_thread.get_dpm(), 1)
+                stats['delay'] = t_delay
+                add_overlay()
 
-            # wait briefly to interpret keystroke
-            keypress = cv2.waitKeyEx(1)
-            if keypress == 113: #cv2.waitKeyEx(1) & 0xFF == ord('q'):
-                print("\nTerminating video feed! 'q' Pressed.")
-                cv2.destroyWindow(window_name)
-                cv2.waitKey(1)  # flushes command
-                break
-            elif keypress == 32:  # space bar
-                cv2.imwrite("./logdir/{}.png".format(elapsed_time()), frame)
-                # time.sleep(.05)
-            elif keypress == 93:  # left bracket
-                delay += .005
-            elif keypress == 91:  # right bracket
-                delay = max((0, delay - .005))
+                # update window
+                cv2.imshow(window_name, frame)
 
-            # pause to smooth video stream
-            # delay = .03
-            # pause extra to display captures
-            frame_delay = 0
-            if source_queue is det_queue:
-                frame_delay += .25
-            # pause more as buffer gets smaller
-            t_delay = 1 / (ref_queue.qsize() + 2) + delay + frame_delay
-            time.sleep(t_delay)
+                # wait briefly to interpret keystroke
+                keypress = cv2.waitKeyEx(1)
+                if keypress == 113: #cv2.waitKeyEx(1) & 0xFF == ord('q'):
+                    print("\nTerminating video feed! 'q' Pressed.")
+                    cv2.destroyWindow(window_name)
+                    cv2.waitKey(1)  # flushes command
+                    break
+                elif keypress == 32:  # space bar
+                    cv2.imwrite("./logdir/{}.png".format(elapsed_time()), frame)
+                    # time.sleep(.05)
+                elif keypress == 93:  # left bracket
+                    delay += .005
+                elif keypress == 91:  # right bracket
+                    delay = max((0, delay - .005))
+
+                # pause to smooth video stream
+                # delay = .03
+                # pause extra to display captures
+                frame_delay = 0
+                if source_queue is det_queue:
+                    frame_delay += .25
+                # pause more as buffer gets smaller
+                t_delay = 1 / (ref_queue.qsize() + 2) + delay + frame_delay
+                time.sleep(t_delay)
 
         except Exception as e:  # in case of failure, continue
             print("Main thread: {}".format(e))
