@@ -20,3 +20,4 @@ Changes:
 ### v3.0 - flask web page
 
 * use browser to display video
+https://blog.miguelgrinberg.com/post/video-streaming-with-flask
