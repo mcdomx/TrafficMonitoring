@@ -2,6 +2,7 @@ import threading
 import time
 import datetime
 import os
+from modules.QueueService import QueueService
 
 
 def convert_detections_to_counts(detections: list) -> dict:
@@ -12,7 +13,7 @@ def convert_detections_to_counts(detections: list) -> dict:
     counts = {}
     for item in detections:
         obj_name = counts.get(item["name"])
-        if obj_name == None:
+        if not obj_name:
             counts[item['name']] = 1
         else:
             counts[item['name']] += 1
@@ -45,7 +46,7 @@ def calc_avg_counts(frame_counts: list) -> dict:
     for frame_detections in frame_counts:
         for item, count in frame_detections.items():
             obj_name = counts.get(item)
-            if obj_name == None:
+            if not obj_name:
                 counts[item] = count
             else:
                 counts[item] += count
@@ -88,9 +89,10 @@ class LoggingThread(threading.Thread):
     This thread will convert that list into the averages for the
     logging period (usu. 1 minute).
     """
-    def __init__(self, detections_queue, read_thread):
+    def __init__(self, read_thread):
         threading.Thread.__init__(self)
-        self.detections_queue = detections_queue
+        # self.detections_queue = detections_queue
+        self.qs = QueueService()
         self.read_thread = read_thread
         self.running = False
 
@@ -115,8 +117,8 @@ class LoggingThread(threading.Thread):
 
             # get detections from queue
             det_list = []
-            while not self.detections_queue.empty():
-                det_list.append(self.detections_queue.get())
+            while not self.qs.detections_queue.empty():
+                det_list.append(self.qs.detections_queue.get())
 
             # auto-throttle detection rate
             cur_dpm = self.read_thread.get_dpm()

@@ -3,10 +3,10 @@ import cv2
 import time
 import os
 import numpy as np
-import queue
 from modules.Logging.LoggingThread import LoggingThread
 from modules.Monitoring.Monitor import Monitor
 from modules.Video_Capture.VideoCaptureThread import VideoCaptureThread
+from modules.QueueService import QueueService
 
 warnings.filterwarnings('ignore')
 
@@ -57,7 +57,6 @@ def stream_object_detection():
         where keys are displayed statistics and values are the
         respective values.
         """
-        # frame[frame.shape[0] - 10: frame.shape[0] - 30, 10:20] = np.int(frame[frame.shape[0] - 10: frame.shape[0] - 30, 10:20] / 2)
         # HELP MENU
         cv2.putText(frame, "{}".format("'q' - quit"),
                     (10, frame.shape[0] - 10),
@@ -82,28 +81,11 @@ def stream_object_detection():
     # list of threads
     thread_list = []
 
-    # 4 queues are used.
-    # 'det_queue'   : Holds tuples for each frame with detected objects.
-    #                 tuple(frame_num, frame_image)
-    # 'undet_queue' : Holds tuples for each frame with no detected objects.
-    #                 tuple(frame_num, frame_image)
-    # 'ref_queue'   : Holds tuples for each frame captured.
-    #                 tuple(frame_num, queue_of_frame_image)
-    # 'detections_queue' : Holds lists of detected objects from each detected frame
-    buffer_size = 256
-    ref_queue = queue.Queue(buffer_size)  # includes frame num and queue to get frame from
-    det_queue = queue.Queue(buffer_size)  # includes frames with processed detections
-    undet_queue = queue.Queue(buffer_size)  # includes frame without detections
-    detections_queue = queue.Queue()  # includes detections for the logging interval period
-    mon_queue = queue.Queue()  # used to monitor detections (time, detections, image)
+    # establish queue service
+    qs = QueueService()
 
-    # start thread to read video
-    capture_thread = VideoCaptureThread(ref_queue,
-                                        det_queue,
-                                        undet_queue,
-                                        detections_queue,
-                                        mon_queue,
-                                        dpm=get_dpm(),
+    # start thread to capture video stream
+    capture_thread = VideoCaptureThread(dpm=get_dpm(),
                                         display_fps=get_display_fps())
     capture_thread.setName("capture-thread")
     capture_thread.start()
@@ -119,15 +101,14 @@ def stream_object_detection():
 
     # start logging thread
     if os.getenv("LOGGING", "True") == "True":
-        logging_thread = LoggingThread(detections_queue,
-                                       capture_thread)
+        logging_thread = LoggingThread(capture_thread)  # (detections_queue,capture_thread)
         logging_thread.setName("logging-thread")
         logging_thread.start()
         thread_list.append(logging_thread)
 
     # start monitoring thread
     if os.getenv("MONITORING", "True") == "True":
-        monitoring_thread = Monitor(mon_queue=mon_queue)
+        monitoring_thread = Monitor()  # (mon_queue=mon_queue)
         monitoring_thread.setName("monitoring-thread")
         monitoring_thread.start()
         thread_list.append(monitoring_thread)
@@ -138,7 +119,7 @@ def stream_object_detection():
 
     # initialize variables
     last_display_time = 0
-    delay = 0 #.03 Set to smooth video - adjusted with '[' and ']' keys.
+    delay = 0  # .03 Set to smooth video - adjusted with '[' and ']' keys.
     t_delay = 0
 
     # main display loop - main thread
@@ -148,11 +129,11 @@ def stream_object_detection():
             continue
 
         print("{:90}".format(" "), end='\r')  # clear line
-        print("Elapsed time: {:<8} Buffer size: {:<3} delay: {}".format(round(elapsed_time(), 1), ref_queue.qsize(), delay), end='\r')
+        print("Elapsed time: {:<8} Buffer size: {:<3} delay: {}".format(round(elapsed_time(), 1), qs.ref_queue.qsize(), delay), end='\r')
 
         try:
-            frame_num, source_queue = ref_queue.get()
-            ref_queue.task_done()
+            frame_num, source_queue = qs.ref_queue.get()
+            qs.ref_queue.task_done()
             frame_num, frame = source_queue.get()
             source_queue.task_done()
 
@@ -171,7 +152,7 @@ def stream_object_detection():
 
                 # wait briefly to interpret keystroke
                 keypress = cv2.waitKeyEx(1)
-                if keypress == 113: #cv2.waitKeyEx(1) & 0xFF == ord('q'):
+                if keypress == 113:  # cv2.waitKeyEx(1) & 0xFF == ord('q'):
                     print("\nTerminating video feed! 'q' Pressed.")
                     cv2.destroyWindow(window_name)
                     cv2.waitKey(1)  # flushes command
@@ -188,10 +169,10 @@ def stream_object_detection():
                 # delay = .03
                 # pause extra to display captures
                 frame_delay = 0
-                if source_queue is det_queue:
+                if source_queue is qs.det_queue:
                     frame_delay += .25
                 # pause more as buffer gets smaller
-                t_delay = 1 / (ref_queue.qsize() + 2) + delay + frame_delay
+                t_delay = 1 / (qs.ref_queue.qsize() + 2) + delay + frame_delay
                 time.sleep(t_delay)
 
         except Exception as e:  # in case of failure, continue

@@ -2,6 +2,7 @@ import threading
 import queue
 import cv2
 import json
+from modules.QueueService import QueueService
 
 
 class Monitor(threading.Thread):
@@ -10,9 +11,10 @@ class Monitor(threading.Thread):
     If an item in the detection is in the mon_list,
     save the image.
     """
-    def __init__(self, mon_queue: queue.Queue):
+    def __init__(self):  # , mon_queue: queue.Queue):
         threading.Thread.__init__(self)
-        self.mon_queue = mon_queue  # (time, detections, image)
+        # self.mon_queue = mon_queue  # (time, detections, image)
+        self.qs = QueueService()
         self.running = False
         print("Monitoring:   ON")
 
@@ -40,7 +42,7 @@ class Monitor(threading.Thread):
         self.running = True
         while self.running:
             try:
-                time_stamp, detections, image = self.mon_queue.get(block=True, timeout=1/60) #
+                time_stamp, detections, image = self.qs.mon_queue.get(block=True, timeout=1/60)
                 # for i, item in enumerate(x):
                 #     print("{}: {}".format(i, item))
 
