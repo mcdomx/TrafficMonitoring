@@ -1,22 +1,18 @@
 import warnings
-import cv2
 import time
-import os
+import threading
+
+import cv2
 import numpy as np
-from modules.Logging.LoggingThread import LoggingThread
-from modules.Monitoring.Monitor import Monitor
-from modules.Video_Capture.VideoCaptureThread import VideoCaptureThread
-from modules.QueueService import QueueService
+
+from modules.logging.logging_thread import LoggingThread
+from modules.monitoring.monitoring_thread import Monitor
+from modules.Video_Capture.video_capture_thread import VideoCaptureThread
+from modules.queue_service import QueueService
+from modules.parameters import Params
+
 
 warnings.filterwarnings('ignore')
-
-
-def get_dpm() -> int:
-    return int(os.getenv("DPM", 20))
-
-
-def get_display_fps() -> int:
-    return int(os.getenv("DISPLAY_FPS", 30))
 
 
 def stream_object_detection():
@@ -41,6 +37,10 @@ def stream_object_detection():
     window is selected.
 
     """
+    def start_thread(t: threading.Thread, name: str):
+        t.setName(name)
+        t.start()
+        return t
 
     def terminate_threads():
         for t in thread_list:
@@ -78,40 +78,18 @@ def stream_object_detection():
     # set display window title bar text
     window_name = "Traffic Monitor"
 
-    # list of threads
-    thread_list = []
+    # initialize parameters
+    p = Params()
 
-    # establish queue service
+    # initialize queue service
     qs = QueueService()
 
-    # start thread to capture video stream
-    capture_thread = VideoCaptureThread(dpm=get_dpm(),
-                                        display_fps=get_display_fps())
-    capture_thread.setName("capture-thread")
-    capture_thread.start()
-    thread_list.append(capture_thread)
-
-    # get the source's fps rate
-    cam_fps = 0
-    while cam_fps == 0:
-        cam_fps = capture_thread.get_camfps()
-        time.sleep(.2)
-        print("waiting for fps rate....", end='')
-    print("FPS={}".format(cam_fps))
-
-    # start logging thread
-    if os.getenv("LOGGING", "True") == "True":
-        logging_thread = LoggingThread(capture_thread)  # (detections_queue,capture_thread)
-        logging_thread.setName("logging-thread")
-        logging_thread.start()
-        thread_list.append(logging_thread)
-
-    # start monitoring thread
-    if os.getenv("MONITORING", "True") == "True":
-        monitoring_thread = Monitor()  # (mon_queue=mon_queue)
-        monitoring_thread.setName("monitoring-thread")
-        monitoring_thread.start()
-        thread_list.append(monitoring_thread)
+    # start threads
+    thread_list = [
+                    start_thread(VideoCaptureThread(), "capture-thread"),
+                    start_thread(LoggingThread(), "logging-thread"),
+                    start_thread(Monitor(), "monitoring-thread")
+                    ]
 
     # simplify access to elapsed time
     start_time = time.perf_counter()
@@ -119,13 +97,13 @@ def stream_object_detection():
 
     # initialize variables
     last_display_time = 0
-    delay = 0  # .03 Set to smooth video - adjusted with '[' and ']' keys.
+    delay = 0.03  # .03 Set to smooth video - adjusted with '[' and ']' keys.
     t_delay = 0
 
     # main display loop - main thread
     while True:
 
-        if elapsed_time() - last_display_time < 1 / cam_fps:
+        if elapsed_time() - last_display_time < 1 / p.CAM_FPS:
             continue
 
         print("{:90}".format(" "), end='\r')  # clear line
@@ -139,12 +117,11 @@ def stream_object_detection():
 
             last_display_time = elapsed_time()
 
-            if os.getenv("SHOW_VIDEO", "True") == "True":
-
+            if p.SHOW_VIDEO:
                 # frame overlay
                 stats = {}
-                stats['dpm'] = round(capture_thread.get_dpm(), 1)
-                stats['delay'] = t_delay
+                stats.setdefault('dpm', round(p.DPM, 1))
+                stats.setdefault('delay', t_delay)
                 add_overlay()
 
                 # update window
@@ -159,14 +136,11 @@ def stream_object_detection():
                     break
                 elif keypress == 32:  # space bar
                     cv2.imwrite("./logdir/{}.png".format(elapsed_time()), frame)
-                    # time.sleep(.05)
                 elif keypress == 93:  # left bracket
-                    delay += .005
+                    delay = round(delay + .005, 3)
                 elif keypress == 91:  # right bracket
-                    delay = max((0, delay - .005))
+                    delay = max((0, round(delay - .005, 3)))
 
-                # pause to smooth video stream
-                # delay = .03
                 # pause extra to display captures
                 frame_delay = 0
                 if source_queue is qs.det_queue:

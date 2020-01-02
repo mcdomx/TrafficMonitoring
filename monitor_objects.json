@@ -1,7 +1,7 @@
 {
 "person": "valid",
 "bicycle": "invalid",
-"car": "valid",
+"car": "invalid",
 "motorcycle": "invalid",
 "airplane": "invalid",
 "bus": "invalid",
