@@ -1,4 +1,4 @@
-# Traffic Detection (v3.0) - UNDER DEVELOPMENT
+# Traffic Detection (v2.0)
 
 Traffic Detection will capture detected images from a video stream.  The video stream will be displayed in a python image window while the program is running.  The program will detect images at an adjusted rate based on the computer's ability to handle detections.  Detections can be logged to a CSV file.  
 
