@@ -8,13 +8,39 @@ are in this module.  No other mnodules should
 change these values.
 """
 import os
+import json
+
 import pafy
 import cv2
 import numpy as np
 
 
+def _read_object_file(file_name) -> set:
+    """
+    Returns all items in an object file that are set to valid.
+    File is a json dict: {<object>:"valid"|"invalid"}
+    """
+    with open(file_name, 'r') as fp:
+        mon_dict = json.load(fp)
+
+    return {k.strip() for k, v in mon_dict.items() if v == 'valid'}
+
+
 class Params:
+    """
+    Singleton of all program parameters.
+    Some are from environment variables and some are from files.
+    """
     singleton = None
+
+    # Access Data in Files
+    @staticmethod
+    def get_monitored_objects(file_name="monitor_objects.json") -> set:
+        return _read_object_file(file_name)
+
+    @staticmethod
+    def get_detected_objects(file_name="detect_objects.json") -> set:
+        return _read_object_file(file_name)
 
     class __Singleton:
         def __init__(self):
@@ -28,6 +54,8 @@ class Params:
             self._DPM = int(os.getenv("DPM", 20))
             self._DISPLAY_FPS = int(os.getenv("DISPLAY_FPS", 30))
             self._MONITORING = True if os.getenv("MONITORING", "True") == "True" else False
+            self._MON_DIR = os.getenv("MON_DIR", "./monitor_images")
+            self._MON_OBJS = Params.get_monitored_objects()
             self._SHOW_VIDEO = True if os.getenv("SHOW_VIDEO", "True") == "True" else False
 
         @property
@@ -124,6 +152,18 @@ class Params:
             self._MONITORING = val
 
         @property
+        def MON_DIR(self):
+            return self._MON_DIR
+
+        @MON_DIR.setter
+        def MON_DIR(self, val):
+            self._MON_DIR = val
+
+        @property
+        def MON_OBJS(self):
+            return self._MON_OBJS
+
+        @property
         def SHOW_VIDEO(self):
             return self._SHOW_VIDEO
 
@@ -144,6 +184,7 @@ class Params:
             rv += "\n\tDPM           : {}".format(self.DPM)
             rv += "\n\tDISPLAY_FPS   : {}".format(self.DISPLAY_FPS)
             rv += "\n\tMONITORING    : {}".format(self.MONITORING)
+            rv += "\n\tMONITORED OBJS: {}".format(Params.get_monitored_objects())
             rv += "\n\tSHOW_VIDEO    : {}".format(self.SHOW_VIDEO)
 
             return rv

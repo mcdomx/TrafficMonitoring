@@ -97,7 +97,7 @@ def stream_object_detection():
 
     # initialize variables
     last_display_time = 0
-    delay = 0.03  # .03 Set to smooth video - adjusted with '[' and ']' keys.
+    delay = 0.045  # .03 Set to smooth video - adjusted with '[' and ']' keys.
     t_delay = 0
 
     # main display loop - main thread

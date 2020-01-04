@@ -24,6 +24,12 @@ class VideoCaptureThread(threading.Thread):
         self.running = False
         self.start_time = None
 
+    def stop(self):
+        self.running = False
+
+    def is_running(self):
+        return self.running
+
     def run(self):
         """
         Thread stops when capture is closed.
@@ -82,7 +88,8 @@ class VideoCaptureThread(threading.Thread):
                         self.qs.detections_queue.put(detections)
 
                         # monitor detections
-                        self.qs.mon_queue.put((time.asctime(), detections, det_frame))
+                        # need to queue dict in order for get to function with time
+                        self.qs.mon_queue.put({"t": time.time(), "d": detections, "f": det_frame})
 
                     else:
                         # put undetected frame in queue
@@ -98,13 +105,8 @@ class VideoCaptureThread(threading.Thread):
                 print("{} // run(): {}".format(self.getName(), e))
 
         cap.release()
-        print("Exited '{}'!".format(self.getName()))
 
-    def stop(self):
-        self.running = False
 
-    def is_running(self):
-        return self.running
 
 
 

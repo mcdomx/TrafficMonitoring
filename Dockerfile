@@ -24,11 +24,11 @@ RUN pip3 install https://github.com/OlafenwaMoses/ImageAI/releases/download/2.0.
 # Copy python code and custom objects file
 COPY ./capture_video.py .
 COPY ./modules ./modules
-COPY ./custom_objects.json .
-COPY ./monitor_objects.json .
+COPY ./*.json ./
 
-# Make a log directory
+# Make a log and captured images directory
 CMD mkdir /app/logdir
+CMD mkdir /app/monitored_images
 
 ENTRYPOINT ["python", "capture_video.py"]
 

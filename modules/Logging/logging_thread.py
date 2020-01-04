@@ -106,7 +106,5 @@ class LoggingThread(threading.Thread):
                 print("{}:{}".format(k, round(v, 2)), end='  ')
             print("")
 
-        print("Exited '{}'!".format(self.getName()))
-
     def stop(self):
         self.running = False

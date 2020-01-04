@@ -58,7 +58,7 @@ class DetectorImageai(Detector):
         Detector.__init__(self, name)
         self.name = name
         self.detector = get_detector(p.MODEL, det_type='image')
-        self.custom_objects = self.get_custom_objects()
+        self.detect_objects = self.get_detected_objects()
 
     def detect(self, frame_num: int, frame: np.array) -> (int, np.array, list):
         """
@@ -71,7 +71,7 @@ class DetectorImageai(Detector):
         det_frame = detections = None
 
         try:
-            if self.custom_objects is None:
+            if self.detect_objects is None:
                 det_frame, detections = self.detector.detectObjectsFromImage(
                     input_type="array",
                     minimum_percentage_probability=60,
@@ -79,7 +79,7 @@ class DetectorImageai(Detector):
                     output_type="array")
             else:
                 det_frame, detections = self.detector.detectCustomObjectsFromImage(
-                    custom_objects=self.custom_objects,
+                    custom_objects=self.detect_objects,
                     input_type="array",
                     minimum_percentage_probability=60,
                     input_image=frame,
@@ -93,7 +93,7 @@ class DetectorImageai(Detector):
 
         return frame_num, det_frame, detections
 
-    def get_custom_objects(self):
+    def get_detected_objects(self):
         """
         There are 80 possible objects that you can detect with the
         ObjectDetection class, and they are as seen below.
@@ -117,24 +117,22 @@ class DetectorImageai(Detector):
         Load custom objects file from custom_objects.json' file.
         If file read fails, set all objects to detectable.
         """
-        print("loading custom objects ...", end='')
+        print("loading detected objects ...", end='')
 
-        custom_objects = None
         try:
-            with open('custom_objects.json', 'r') as fp:
-                custom_objects = json.load(fp)
-            print("Loaded custom objects from file!")
+            with open('detect_objects.json', 'r') as fp:
+                detect_objects = json.load(fp)
+            print("Loaded detected objects from file!")
         except FileNotFoundError:
             # set all objects to valid if file read doesn't work
-            print("No custom object file found.  Using all objects.")
-            custom_objects = self.detector.CustomObjects()
-            for k, v in custom_objects.items():
-                custom_objects[k] = 'valid'
+            print("No detected_objects.json file found.  Using all objects.")
+            detect_objects = self.detector.CustomObjects()
+            for k, v in detect_objects.items():
+                detect_objects[k] = 'valid'
         except Exception as e:
             print("Unable to set custom objects: ".format(e))
             return None
 
         print("{:90}".format(" "), end='\r')  # clear line
-        print("custom objects loaded!")
-        return custom_objects
-
+        print("Detected objects loaded!")
+        return detect_objects
