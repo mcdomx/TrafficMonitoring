@@ -20,7 +20,7 @@ Changes:
 * enable snap shots based on conditional presence of object, "monitoring"
 * added support for various new docker env variables 
 
-### v3.0 (future)- flask web page
+### v3.0 (in process)- flask web page
 
 * use browser to display video
 https://blog.miguelgrinberg.com/post/video-streaming-with-flask
