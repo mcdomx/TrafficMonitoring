@@ -1,6 +1,6 @@
 from modules.detectors.detector import Detector
 from modules.detectors.detector_imageai import DetectorImageai
-from modules.parameters import Params
+from modules.services.parameters import Params
 
 p = Params()
 

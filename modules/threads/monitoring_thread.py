@@ -1,33 +1,31 @@
-import threading
+# import threading
 import queue
 import os
 import time
 
 import cv2
 
-from modules.queue_service import QueueService
-from modules.parameters import Params
+from modules.services.parameters import Params
+from modules.threads.thread import Thread
 
 p = Params()
 
 
-class Monitor(threading.Thread):
+class MonitorThread(Thread):
     """
     Thread will monitor a queue where each detection is placed.
     If an item in the detection is in the mon_list,
     save the image.
     """
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.qs = QueueService()
-        self.running = False
+    def __init__(self, name):
+        Thread.__init__(self, name)
 
     def run(self):
 
-        self.running = True
-        while self.running:
+        self._running = True
+        while self._running:
             try:
-                d_elems = self.qs.mon_queue.get(block=True, timeout=1/60)  # need to allow pass in case of shutdown
+                d_elems = self._qs.mon_queue.get(block=True, timeout=1/60)  # need to allow pass in case of shutdown
                 time_stamp = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(d_elems.get('t')))
                 detections = d_elems.get('d')
                 image = d_elems.get('f')
@@ -40,6 +38,3 @@ class Monitor(threading.Thread):
 
             except queue.Empty:
                 continue
-
-    def stop(self):
-        self.running = False

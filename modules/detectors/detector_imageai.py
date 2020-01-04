@@ -5,7 +5,7 @@ import json
 from imageai.Detection import VideoObjectDetection
 from imageai.Detection import ObjectDetection
 from modules.detectors.detector import Detector
-from modules.parameters import Params
+from modules.services.parameters import Params
 
 p = Params()
 
@@ -120,7 +120,7 @@ class DetectorImageai(Detector):
         print("loading detected objects ...", end='')
 
         try:
-            with open('detect_objects.json', 'r') as fp:
+            with open(os.path.join('.', 'settings', 'detect_objects.json'), 'r') as fp:
                 detect_objects = json.load(fp)
             print("Loaded detected objects from file!")
         except FileNotFoundError:

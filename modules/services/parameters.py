@@ -4,8 +4,8 @@ traffic monitoring. Each parameter is expected
 to be stored as a local environment variable.
 
 Any methods that determine a variable value
-are in this module.  No other mnodules should
-change these values.
+are in this module.  Other modules may change
+variable values through accessors only.
 """
 import os
 import json
@@ -35,11 +35,11 @@ class Params:
 
     # Access Data in Files
     @staticmethod
-    def get_monitored_objects(file_name="monitor_objects.json") -> set:
+    def get_monitored_objects(file_name=os.path.join('.', 'settings', 'monitor_objects.json')) -> set:
         return _read_object_file(file_name)
 
     @staticmethod
-    def get_detected_objects(file_name="detect_objects.json") -> set:
+    def get_detected_objects(file_name=os.path.join('.', 'settings', 'detect_objects.json')) -> set:
         return _read_object_file(file_name)
 
     class __Singleton:
@@ -47,14 +47,14 @@ class Params:
             self._CAM_STREAM = Params._get_cam_name(os.getenv("CAM_STREAM", 0))
             self._CAM_FPS = Params._get_camfps(self._CAM_STREAM)
             self._LOGGING = True if os.getenv("LOGGING", "True") == "True" else False
-            self._LOG_FILEPATH = os.getenv("LOG_FILEPATH", "./logdir/camlogs.txt")
+            self._LOG_FILEPATH = os.getenv("LOG_FILEPATH", os.path.join('.', 'logs', 'files', 'camlogs.txt'))
             self._DETECTION = True if os.getenv("DETECTION", 'True') == "True" else False
             self._DETECTOR = os.getenv("DETECTOR", "imageai")
             self._MODEL = os.getenv("MODEL", "yolo")
             self._DPM = int(os.getenv("DPM", 20))
             self._DISPLAY_FPS = int(os.getenv("DISPLAY_FPS", 30))
             self._MONITORING = True if os.getenv("MONITORING", "True") == "True" else False
-            self._MON_DIR = os.getenv("MON_DIR", "./monitor_images")
+            self._MON_DIR = os.getenv("MON_DIR", os.path.join('.', 'logs', 'images'))
             self._MON_OBJS = Params.get_monitored_objects()
             self._SHOW_VIDEO = True if os.getenv("SHOW_VIDEO", "True") == "True" else False
 

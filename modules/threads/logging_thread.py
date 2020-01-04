@@ -1,10 +1,11 @@
-import threading
 import time
 import datetime
 import os
 from collections import Counter
-from modules.queue_service import QueueService
-from modules.parameters import Params
+
+from modules.services.parameters import Params
+from modules.threads.thread import Thread
+from modules.timers.elapsed_time import ElapsedTime
 
 p = Params()
 
@@ -51,43 +52,41 @@ def log_counts(cap_time, counts):
             fp.write('\n')
 
 
-class LoggingThread(threading.Thread):
+class LoggingThread(Thread):  # threading.Thread):
     """
     Log detections to file.
     At each interval (usu. 1 second) detections are added to a list.
     This thread will convert that list into the averages for the
     logging period (usu. 1 minute).
     """
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.qs = QueueService()
-        self.running = False
+    def __init__(self, name):
+        Thread.__init__(self, name)
 
     def run(self):
         """
         go through detections list
         add detected items to dictionary
         """
-        start_time = time.perf_counter()
-        elapsed_time = lambda: time.perf_counter() - start_time
-        minute_counter = elapsed_time()
+        # start timer
+        elapsed_time = ElapsedTime()
+        minute_counter = 0
 
-        self.running = True
+        self._running = True
 
-        while self.running:
+        while self._running:
 
             # loop till minute has elapsed
-            while elapsed_time() - minute_counter < 60 and self.running:
+            while elapsed_time.get() - minute_counter < 60 and self._running:
                 time.sleep(1)
-            minute_counter = elapsed_time()
+            minute_counter = elapsed_time.get()
 
             # record time of count
             count_time = datetime.datetime.now()
 
             # get detections from queue
             det_list = []
-            while not self.qs.detections_queue.empty():
-                det_list.append(self.qs.detections_queue.get())
+            while not self._qs.detections_queue.empty():
+                det_list.append(self._qs.detections_queue.get())
 
             # auto-throttle detection rate
             p.update_DPM(len(det_list))
@@ -105,6 +104,3 @@ class LoggingThread(threading.Thread):
             for k, v in minute_averages.items():
                 print("{}:{}".format(k, round(v, 2)), end='  ')
             print("")
-
-    def stop(self):
-        self.running = False

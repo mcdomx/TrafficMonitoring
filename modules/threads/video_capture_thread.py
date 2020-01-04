@@ -1,16 +1,17 @@
-import threading
+# import threading
 import time
 
 import cv2
 
 from modules.detectors.detector_factory import DetectorFactory
-from modules.queue_service import QueueService
-from modules.parameters import Params
+from modules.services.parameters import Params
+from modules.threads.thread import Thread
+from modules.timers.elapsed_time import ElapsedTime
 
 p = Params()
 
 
-class VideoCaptureThread(threading.Thread):
+class VideoCaptureThread(Thread):
     """
     Thread that will read images from video stream.
     Places frames in queues depending on whether or not
@@ -18,17 +19,8 @@ class VideoCaptureThread(threading.Thread):
     Arguments are references to the queues where frames
     are put into.
     """
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.qs = QueueService()
-        self.running = False
-        self.start_time = None
-
-    def stop(self):
-        self.running = False
-
-    def is_running(self):
-        return self.running
+    def __init__(self, name):
+        Thread.__init__(self, name)
 
     def run(self):
         """
@@ -37,22 +29,22 @@ class VideoCaptureThread(threading.Thread):
         # get detector
         detector = DetectorFactory.get()
 
-        # simplified access to elapsed time
-        self.start_time = time.perf_counter()
-        elapsed_time = lambda: time.perf_counter() - self.start_time
-
         # initialize loop variables
-        last_detection_time = elapsed_time()
         frame_count = d_ctr = 0
 
         # open cam and start capture
         cap = cv2.VideoCapture(p.CAM_STREAM)
 
         # main loop
-        self.running = True
-        if self.running and cap.isOpened():
+        self._running = True
+        if self._running and cap.isOpened():
             print("CAM STARTED!")
-        while cap.isOpened() and self.running:
+
+        # start timer
+        elapsed_time = ElapsedTime()
+        last_detection_time = 0
+
+        while cap.isOpened() and self._running:
 
             # loop until display fps reached
             c = 0
@@ -65,7 +57,7 @@ class VideoCaptureThread(threading.Thread):
             while not success:
                 success, cur_frame = cap.read()
             frame_count += 1
-            last_pull_time = elapsed_time()
+            last_pull_time = elapsed_time.get()
 
             # if inference is on, perform detections each second
             try:
@@ -76,7 +68,7 @@ class VideoCaptureThread(threading.Thread):
                         d_ctr += 1
 
                         # put detected queue in ref queue
-                        self.qs.ref_queue.put((frame_count, self.qs.det_queue))
+                        self._qs.ref_queue.put((frame_count, self._qs.det_queue))
 
                         # run detection on frame
                         frame_num, det_frame, detections = detector.detect(frame_num=frame_count,
@@ -84,29 +76,24 @@ class VideoCaptureThread(threading.Thread):
 
                         det_frame = det_frame.copy()
                         # put in queue
-                        self.qs.det_queue.put((frame_num, det_frame))
-                        self.qs.detections_queue.put(detections)
+                        self._qs.det_queue.put((frame_num, det_frame))
+                        self._qs.detections_queue.put(detections)
 
                         # monitor detections
                         # need to queue dict in order for get to function with time
-                        self.qs.mon_queue.put({"t": time.time(), "d": detections, "f": det_frame})
+                        self._qs.mon_queue.put({"t": time.time(), "d": detections, "f": det_frame})
 
                     else:
                         # put undetected frame in queue
-                        self.qs.ref_queue.put((frame_count, self.qs.undet_queue))
-                        self.qs.undet_queue.put((frame_count, cur_frame.copy()))
+                        self._qs.ref_queue.put((frame_count, self._qs.undet_queue))
+                        self._qs.undet_queue.put((frame_count, cur_frame.copy()))
 
                 else:  # detection is 'off'
                     # put undetected frame in reference queue
-                    self.qs.ref_queue.put((frame_count, self.qs.undet_queue))
-                    self.qs.undet_queue.put((frame_count, cur_frame.copy()))
+                    self._qs.ref_queue.put((frame_count, self._qs.undet_queue))
+                    self._qs.undet_queue.put((frame_count, cur_frame.copy()))
 
             except Exception as e:
                 print("{} // run(): {}".format(self.getName(), e))
 
         cap.release()
-
-
-
-
-
