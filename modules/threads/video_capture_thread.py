@@ -4,11 +4,11 @@ import time
 import cv2
 
 from modules.detectors.detector_factory import DetectorFactory
-from modules.services.parameters import Params
 from modules.threads.thread import Thread
 from modules.timers.elapsed_time import ElapsedTime
-
-p = Params()
+# from modules.services.parameters import Params
+#
+# p = Params()
 
 
 class VideoCaptureThread(Thread):
@@ -21,19 +21,22 @@ class VideoCaptureThread(Thread):
     """
     def __init__(self, name):
         Thread.__init__(self, name)
+        self._elapsed_time = None
 
     def run(self):
         """
         Thread stops when capture is closed.
         """
         # get detector
-        detector = DetectorFactory.get()
+        detector = None
+        if self._p.DETECTION:
+            detector = DetectorFactory.get(self._p.DETECTOR_NAME, self._p.DETECTOR_MODEL)
 
         # initialize loop variables
-        frame_count = d_ctr = 0
+        frame_count = 0
 
         # open cam and start capture
-        cap = cv2.VideoCapture(p.CAM_STREAM)
+        cap = cv2.VideoCapture(self._p.CAM_STREAM)
 
         # main loop
         self._running = True
@@ -41,31 +44,30 @@ class VideoCaptureThread(Thread):
             print("CAM STARTED!")
 
         # start timer
-        elapsed_time = ElapsedTime()
+        self._elapsed_time = ElapsedTime()
         last_detection_time = 0
 
         while cap.isOpened() and self._running:
 
             # loop until display fps reached
             c = 0
-            while c < p.CAM_FPS / p.DISPLAY_FPS:
+            while c < self._p.CAM_FPS / self._p.DISPLAY_FPS:
                 c += int(cap.grab())
 
             # get next frame
-            success = False
+            # success = False
             cur_frame = None
-            while not success:
-                success, cur_frame = cap.read()
+            while cur_frame is None:
+                _, cur_frame = cap.read()
             frame_count += 1
-            last_pull_time = elapsed_time.get()
+            last_pull_time = self._elapsed_time.get()
 
             # if inference is on, perform detections each second
             try:
-                if p.DETECTION:
-                    if last_pull_time - last_detection_time >= 60 / p.DPM:
+                if self._p.DETECTION:
+                    if last_pull_time - last_detection_time >= 60 / self._p.DPM:
 
                         last_detection_time = last_pull_time
-                        d_ctr += 1
 
                         # put detected queue in ref queue
                         self._qs.ref_queue.put((frame_count, self._qs.det_queue))
@@ -96,4 +98,6 @@ class VideoCaptureThread(Thread):
             except Exception as e:
                 print("{} // run(): {}".format(self.getName(), e))
 
+        # release camera upon exit
         cap.release()
+

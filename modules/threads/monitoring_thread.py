@@ -1,14 +1,10 @@
-# import threading
 import queue
 import os
 import time
 
 import cv2
 
-from modules.services.parameters import Params
 from modules.threads.thread import Thread
-
-p = Params()
 
 
 class MonitorThread(Thread):
@@ -33,8 +29,9 @@ class MonitorThread(Thread):
                 d_items = {d.get('name') for d in detections}
 
                 # if an item is detected and being monitored
-                if d_items & p.MON_OBJS:
-                    cv2.imwrite(os.path.join(p.MON_DIR, "{}.png".format(time_stamp)), image)
+                if d_items & self._p.MON_OBJS:
+                    cv2.imwrite(os.path.join(self._p.MON_DIR, "{}.png".format(time_stamp)), image)
 
             except queue.Empty:
                 continue
+

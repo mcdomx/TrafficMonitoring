@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Traffic Monitoring</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=1">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='traffic_monitor.css') }}">
+    <script src="{{ url_for('static', filename='traffic_monitor.js') }}"></script>
+  </head>
+  <body>
+    <h1>Traffic Monitor</h1>
+
+    <!-- Video and Detection Log ROW   -->
+    <div class="row">
+
+      <div class="col-6">
+        <div class="img">
+          <img id="video_feed" class="img-fluid" src="{{ url_for('video_feed') }}">
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div id="log_listing" class="container mb-2"  style="overflow: scroll; height:55vh;">
+        </div>
+      </div>
+
+    </div> <!-- END ROW -->
+
+    <!-- ROW  -->
+    <div class="row">
+      <div class="col align-self-end">
+        <a href="{{ url_for('toggle_stream') }}">
+          <button type="button" id="btn_toggle_stream" class="btn btn-success">Start</button>
+        </a>
+      </div>
+    </div> <!-- END ROW -->
+
+
+
+    <!-- FOOTER -->
+    <footer class="row justify-content-left fixed-bottom">
+      <section class="col-3">created by Mark McDonald</section>
+    </footer>
+    <!-- end FOOTER -->
+
+  </body>
+</html>

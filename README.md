@@ -67,8 +67,8 @@ Supported environment variables:<br>
 | LOGGING           | Bool(String)| -e LOGGING="True"      | "True" or "False".  Default="False.   Whether or not to log detections to output file.
 | LOG_FILEPATH      | String      | -e LOG_FILEPATH="./logs/files/camlogs.txt"| The local path where log file should be saved.  Ignored if LOG_STREAM is "False".
 | DETECTION         | Bool(String)| -e DETECTION="True"       | "True" of "False".  Whethre or not to perform inference.  If "False", real-time video stream is displayed with no inference overlay.
-| DETECTOR          | String      | -e DETECTOR="imageai"       | Name of detector to use.  Default 'imageai'.  Currently only 'imageai' is supported.
-| MODEL             | String      | -e MODEL="tinyyolo" <br> -e MODEL="yolo"       | The name of the model to be used for inference. "yolo" is default. Only "yolo" and "tinyyolo" are supported.
+| DETECTOR_NAME          | String      | -e DETECTOR_NAME="imageai"       | Name of detector to use.  Default 'imageai'.  Currently only 'imageai' is supported.
+| DETECTOR_MODEL             | String      | -e DETECTOR\_MODEL ="tinyyolo" <br> -e DETECTOR\_MODEL ="yolo"       | The name of the model to be used for inference. "yolo" is default. Only "yolo" and "tinyyolo" are supported.
 | DPM               | int(String) | -e DPM="20"       | Detections per Minute.  Default is 20.  Value will auto-adjust based on the local computer's ability to process.
 | DISPLAY_FPS       | int(String) | -e DISPLAY_FPS ="30"       | The displayed frame rate.  Default is "30".  Will be set to the video's FPS if the DISPLAY_FPS is greater than the video.
 | MONITORING        | Bool(String)| -e MONITORING="True" | Default="True". Will save images of captured objects according to object names saved in the `monitor_list.txt` file.

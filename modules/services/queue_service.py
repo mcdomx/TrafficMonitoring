@@ -18,6 +18,13 @@ class QueueService:
     """
     singleton = None
 
+    def __new__(cls, buffer_size: int = 256):
+        if cls.singleton is None:
+            cls.singleton = cls.__Singleton(buffer_size)
+        elif buffer_size != cls.singleton.get_buffersize():
+            print("Buffer size cannot be changed: {}".format(cls.singleton.buffer_size))
+        return cls.singleton
+
     class __Singleton:
         def __init__(self, buffer_size: int = 256):
             self.buffer_size = buffer_size
@@ -30,9 +37,23 @@ class QueueService:
         def get_buffersize(self) -> int:
             return self.buffer_size
 
-    def __new__(cls, buffer_size: int = 256):
-        if QueueService.singleton is None:
-            QueueService.singleton = QueueService.__Singleton(buffer_size)
-        elif buffer_size != QueueService.singleton.get_buffersize():
-            print("Buffer size cannot be changed: {}".format(QueueService.singleton.buffer_size))
-        return QueueService.singleton
+        def clear_queues(self):
+            for q in (self.ref_queue,
+                      self.det_queue,
+                      self.undet_queue,
+                      self.detections_queue,
+                      self.mon_queue):
+                self.clear_queue(q)
+
+        @staticmethod
+        def clear_queue(q: queue.Queue):
+            with q.mutex:
+                q.queue.clear()
+
+        @staticmethod
+        def resize_queue(q: queue.Queue, new_size: int):
+            with q.mutex:
+                new_q = queue.Queue(new_size)
+                while q.not_empty:
+                    new_q.put(q.get())
+                q = new_q

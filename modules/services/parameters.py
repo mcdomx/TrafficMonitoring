@@ -14,6 +14,8 @@ import pafy
 import cv2
 import numpy as np
 
+from modules.detectors.detector_factory import DetectorFactory
+
 
 def _read_object_file(file_name) -> set:
     """
@@ -49,8 +51,8 @@ class Params:
             self._LOGGING = True if os.getenv("LOGGING", "True") == "True" else False
             self._LOG_FILEPATH = os.getenv("LOG_FILEPATH", os.path.join('.', 'logs', 'files', 'camlogs.txt'))
             self._DETECTION = True if os.getenv("DETECTION", 'True') == "True" else False
-            self._DETECTOR = os.getenv("DETECTOR", "imageai")
-            self._MODEL = os.getenv("MODEL", "yolo")
+            self._DETECTOR_NAME = os.getenv("DETECTOR_NAME", "imageai")
+            self._DETECTOR_MODEL = os.getenv("DETECTOR_MODEL", "yolo")
             self._DPM = int(os.getenv("DPM", 20))
             self._DISPLAY_FPS = int(os.getenv("DISPLAY_FPS", 30))
             self._MONITORING = True if os.getenv("MONITORING", "True") == "True" else False
@@ -101,21 +103,14 @@ class Params:
         def DETECTION(self, val):
             self._DETECTION = val
 
-        @property
-        def DETECTOR(self):
-            return self._DETECTOR
-
-        @DETECTOR.setter
-        def DETECTOR(self, val):
-            self._DETECTOR = val
 
         @property
-        def MODEL(self):
-            return self._MODEL
+        def DETECTOR_NAME(self):
+            return self._DETECTOR_NAME
 
-        @MODEL.setter
-        def MODEL(self, val):
-            self._MODEL = val
+        @property
+        def DETECTOR_MODEL(self):
+            return self._DETECTOR_MODEL
 
         @property
         def DPM(self):
@@ -179,8 +174,8 @@ class Params:
             rv += "\n\tLOGGING       : {}".format(self.LOGGING)
             rv += "\n\tLOG_FILEPATH  : {}".format(self.LOG_FILEPATH)
             rv += "\n\tDETECTION     : {}".format(self.DETECTION)
-            rv += "\n\tDETECTOR      : {}".format(self.DETECTOR)
-            rv += "\n\tMODEL         : {}".format(self.MODEL)
+            rv += "\n\tDETECTOR      : {}".format(self.DETECTOR_NAME)
+            rv += "\n\tMODEL         : {}".format(self.DETECTOR_MODEL)
             rv += "\n\tDPM           : {}".format(self.DPM)
             rv += "\n\tDISPLAY_FPS   : {}".format(self.DISPLAY_FPS)
             rv += "\n\tMONITORING    : {}".format(self.MONITORING)

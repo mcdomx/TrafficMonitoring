@@ -1,0 +1,30 @@
+/* Coolors Exported Palette - coolors.co/3d348b-7678ed-f7b801-f18701-f35b04 */
+/* HSL */
+header, footer {
+  padding: 15px 15px 50px 15px;
+  color: lightgrey;
+  background-color: #368ef2;
+}
+
+footer {
+  height: 6vh;
+}
+
+header {
+  font-size: 1.5em;
+  height: 3vh;
+}
+
+a {
+  color: lightgrey;
+}
+
+a:hover {
+  color: orange;
+  text-decoration: none;
+}
+
+p {
+  text-align: justify;
+  margin: 0px;
+}
