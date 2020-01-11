@@ -4,8 +4,6 @@ import os
 from collections import Counter
 import json
 
-from flask_socketio import SocketIO
-
 from modules.threads.thread import Thread
 from modules.timers.elapsed_time import ElapsedTime
 
@@ -59,16 +57,19 @@ class LoggingThread(Thread):
     This thread will convert that list into the averages for the
     logging period (usu. 1 minute).
     """
-    def __init__(self, name, socketio: SocketIO):
+
+    def __init__(self, name: str, tm):
         self._elapsed_time = None
-        self._socketio = socketio
-        Thread.__init__(self, name)
+        Thread.__init__(self, name, thread_mgr=tm)
 
     def run(self):
         """
         go through detections list
         add detected items to dictionary
         """
+        # clear any existing logging activity
+        self.tm.qs.clear('detections_queue')
+
         # start timer
         self._elapsed_time = ElapsedTime()
         minute_counter = 0
@@ -86,19 +87,17 @@ class LoggingThread(Thread):
             count_time = datetime.datetime.now()
 
             # get all detections from queue
-            det_list = []
-            while not self._qs.detections_queue.empty():
-                det_list.append(self._qs.detections_queue.get())
+            det_list = self.tm.qs.get_detections()
 
             # auto-throttle detection rate
-            self._p.update_DPM(len(det_list))
+            self.tm.ps.DPM = len(det_list)
 
             # convert detections to avg counts
             minute_averages = calc_avg_counts(det_list)
 
             # Log data to file
             if len(minute_averages) > 0:
-                log_counts(count_time, minute_averages, self._p.LOG_FILEPATH)
+                log_counts(count_time, minute_averages, self.tm.ps.LOG_FILEPATH)
 
             # log to console
             print("\n\t{}   # detections: {}".format(count_time, len(det_list)))
@@ -108,5 +107,12 @@ class LoggingThread(Thread):
             print("")
 
             # emit
-            self._socketio.emit("update_log", json.dumps(minute_averages), broadcast=True)
+            minute_averages['time_stamp'] = '{:04}-{:02}-{:02} {:02}:{:02}:{:02}'.format(count_time.year,
+                                                                                         count_time.month,
+                                                                                         count_time.day,
+                                                                                         count_time.hour,
+                                                                                         count_time.minute,
+                                                                                         count_time.second)
+
+            self.tm.socketio.emit("update_log", json.dumps(minute_averages), broadcast=True)
 

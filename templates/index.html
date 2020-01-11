@@ -9,38 +9,107 @@
     <script src="{{ url_for('static', filename='traffic_monitor.js') }}"></script>
   </head>
   <body>
-    <h1>Traffic Monitor</h1>
+    <!-- HEADER -->
+    <header class="row justify-content-left fixed-top">
+      <section class="col-12"><h1>Traffic Monitor</h1></section>
+    </header>
+    <!-- end HEADER -->
 
     <!-- Video and Detection Log ROW   -->
-    <div class="row">
+    <div class="row" style="height:3vh"></div>
+    <div class="row mt-5 px-1 border border-info" style="height:400px;">
 
-      <div class="col-6">
+      <!-- VIDEO WINDOW-->
+      <div class="container col-xs-12 col-s-12 col-6  align-self-center">
         <div class="img">
-          <img id="video_feed" class="img-fluid" src="{{ url_for('video_feed') }}">
+          <img id="video_feed" class="img-fluid border border-secondary" src="{{ url_for('video_feed') }}">
         </div>
       </div>
 
-      <div class="col-6">
-        <div id="log_listing" class="container mb-2"  style="overflow: scroll; height:55vh;">
-        </div>
-      </div>
+      <!-- DETECTION LOG-->
+      <div class="container col-xs-12 col-s-12 col-6  align-self-center">
 
-    </div> <!-- END ROW -->
+          <h5>Detection Log</h5>
+          <div id="log_container" class="container border border-info" style="height:360px; overflow: scroll;">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">Time</th>
+                  <th scope="col">Object</th>
+                  <th scope="col">det/min</th>
+                </tr>
+              </thead>
+
+              <tbody id="log_body">
+
+              </tbody>
+
+            </table>
+          </div>
+
+
+      </div> <!-- END DETECTION LOG COLUMN -->
+
+    </div> <!-- Video and Detection Log ROW -->
 
     <!-- ROW  -->
-    <div class="row">
-      <div class="col align-self-end">
-        <a href="{{ url_for('toggle_stream') }}">
-          <button type="button" id="btn_toggle_stream" class="btn btn-success">Start</button>
-        </a>
+    <div class="container">
+        <h5>Video Controls</h5>
+        <div class="row">
+          <div class="col align-self-end">
+
+            <a href="{{ url_for('toggle_stream') }}">
+              <button type="button" id="btn_toggle_stream" class="btn btn-success">Stop</button>
+            </a>
+
+            <a href="{{ url_for('change_delay', direction='decrease') }}">
+              <button type="button" id="btn_decrease" class="btn btn-success"> - </button>
+            </a>
+
+            <a href="{{ url_for('change_delay', direction='increase') }}">
+              <button type="button" id="btn_increase" class="btn btn-success"> + </button>
+            </a>
+
+          </div>
+        </div> <!-- END ROW -->
+    </div>
+
+
+    <!-- ROW  -->
+    <div class="container">
+        <h5>Thread Control</h5>
+        <div class="row">
+          <div class="col align-self-end">
+            <div>Monitoring: <span id="monitoring_status">ON</span></div>
+              <a href="{{ url_for('toggle_thread', thread='monitor') }}">
+                <button type="button" id="btn_toggle_monitoring" class="btn btn-success">ON/OFF</button>
+              </a>
+
+            <div>Logging: <span id="logging_status">ON</span></div>
+            <a href="{{ url_for('toggle_thread', thread='log') }}">
+              <button type="button" id="btn_toggle_logging" class="btn btn-success">ON/OFF</button>
+            </a>
+
+
+
+          </div>
+        </div> <!-- END ROW -->
+    </div>
+
+    <!-- ROW  -->
+    <div class="container">
+      <h5>Application Log</h5>
+      <div id="app_log" class="col-12 border border-info" style="height:360px; overflow: scroll;">
+
       </div>
-    </div> <!-- END ROW -->
+    </div>
+
 
 
 
     <!-- FOOTER -->
     <footer class="row justify-content-left fixed-bottom">
-      <section class="col-3">created by Mark McDonald</section>
+      <section class="col-12">created by Mark McDonald</section>
     </footer>
     <!-- end FOOTER -->
 

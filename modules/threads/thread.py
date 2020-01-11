@@ -1,9 +1,6 @@
 from abc import ABC
 import threading
 
-from modules.services.queue_service import QueueService
-from modules.services.parameters import Params
-
 
 class Thread(threading.Thread, ABC):
     """
@@ -13,40 +10,27 @@ class Thread(threading.Thread, ABC):
         - sets running to False for each thread causing loops to stop running
     """
 
-    # threads = []
-    # all_running = False
-    #
-    # @classmethod
-    # def terminate_threads(cls):
-    #     for t in cls.threads:  # capture thread must stop first
-    #         print("THREAD: Stopping '{}' ... ".format(t.getName()), end='')
-    #         t.stop()  # signal thread to stop
-    #         t.join()  # wait until it is stopped
-    #         print("stopped!")
-    #
-    #     Thread.all_running = False
-    #     print("All threads stopped!")
-
-    def __init__(self, name):
+    def __init__(self, name, thread_mgr):
         threading.Thread.__init__(self)
         self._name = name
         self._running = False
-        self._qs = QueueService()
-        self._p = Params()
-        # Thread.threads.append(self)
-        # self.start()
-        # print("THREAD: {} > Started!".format(self._name))
-
-        # if len(Thread.threads) >= 3:
-        #     Thread.all_running = True
-        #     print("All threads running!")
+        self.tm = thread_mgr
 
     def getName(self):
         return self._name
 
+    def is_running(self):
+        return self._running
+
+    @property
+    def RUNNING(self):
+        return self._running
+
+    @RUNNING.setter
+    def RUNNING(self, val: bool):
+        self._running = val
+
     def stop(self):
-        self._running = False
-
-
+        self.RUNNING = False
 
 

@@ -22,10 +22,9 @@ class Detector(ABC):
     def MODEL_NAME(self):
         return self._model_name
 
-    def detect(self, frame_num: int, frame: np.array) -> (int, np.array, list):
+    def detect(self, frame: np.array) -> (int, np.array, list):
         """
         Each supported detector must override this method.
         Returns frame number, frame and detections
         """
         ...
-

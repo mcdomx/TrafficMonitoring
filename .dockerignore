@@ -1,0 +1,8 @@
+# any files here will not be included in the docker build
+.DS_Store
+./flask_session
+./__pycache__
+./.git
+./.ipynb_checkpoints
+./.idea
+*.png

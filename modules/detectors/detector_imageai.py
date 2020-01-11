@@ -21,9 +21,6 @@ class DetectorImageai:
     def __new__(cls, detector_name, model_name):
         if cls.singleton is None:
             cls.singleton = cls.__Singleton(detector_name, model_name)
-            print("Detector ImageAI singleton initialized.")
-        else:
-            print("Detector ImageAI singleton already initialized. Returned existing instance.")
         return cls.singleton
 
     class __Singleton(Detector):
@@ -32,7 +29,7 @@ class DetectorImageai:
             self.detector = self.get_detector(det_type='image')
             self.detect_objects = self.get_detected_objects()
 
-        def detect(self, frame_num: int, frame: np.array) -> (int, np.array, list):
+        def detect(self, frame: np.array) -> (int, np.array, list):
             """
             Required method of abstract class Detector.
             Arguments include frame number and frame.
@@ -72,7 +69,7 @@ class DetectorImageai:
                 print("Detector: {}".format(self.detector))
                 print("{} // detect(): {}".format(self.DETECTOR_NAME, e))
 
-            return frame_num, det_frame, detections
+            return det_frame, detections
 
         def get_detected_objects(self):
             """

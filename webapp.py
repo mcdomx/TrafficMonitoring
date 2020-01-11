@@ -2,104 +2,59 @@
 import os
 import time
 
-import numpy as np
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO
 import cv2
-from PIL import Image
 
 from modules.threads.thread_manager import ThreadManager
-from modules.services.queue_service import QueueService
-from modules.services.parameters import Params
 
 # set global attributes
-p = Params()
-qs = QueueService()
 app = Flask(__name__)
-socketio = SocketIO(app)
-thread_manager = ThreadManager(socketio)
-
-# Check for environment variables
 if not os.getenv("FLASK_APP"):
     raise RuntimeError("-- Environment variable FLASK_APP is not set")
+
+socketio = SocketIO(app)
+
+# setup thread manager
+tm = ThreadManager(socketio)
+
+# TEMP - FOR DEVELOPMENT
+tm.ps.BASE_DELAY = .025
 
 
 @app.route('/')
 def index():
-    """Video streaming home page."""
+    """
+    Video streaming home page.
+    """
+    if not tm.all_running:
+        tm.start_all_threads()
     return render_template('index.html')
-
-
-def add_overlay(frame: np.array, stats: dict) -> np.array:
-    """
-    Adds overly to current 'frame'.  Uses local variables
-    stats and frame.  'stats' is a dictionary
-    where keys are displayed statistics and values are the
-    respective values.
-    """
-    # HELP MENU
-    cv2.putText(frame, "{}".format("'q' - quit"),
-                (10, frame.shape[0] - 10),
-                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                fontScale=0.4,
-                color=(200, 0, 0),
-                thickness=1)
-
-    # STATISTICS
-    # cv2.putText(frame, "{}".format("dpm: {}".format(round(capture_thread.get_dpm(), 1))),
-    for i, (k, v) in enumerate(stats.items()):
-        cv2.putText(frame, "{:6} : {}".format(k, round(v, 3)),
-                    (frame.shape[1] - 100, frame.shape[0] - 10 - (i * 15)),
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.4,
-                    color=(200, 0, 0),
-                    thickness=1)
-
-    return frame
-
-
-def get_frame(stats: dict = None) -> (int, np.array, float):
-    frame_num, source_queue = qs.ref_queue.get()
-    qs.ref_queue.task_done()
-    frame_num, frame = source_queue.get()
-    source_queue.task_done()
-
-    # frame overlay
-    if stats:
-        frame = add_overlay(frame, stats)
-
-    # pause extra to display captures
-    f_delay = 0
-    if source_queue is qs.det_queue:
-        f_delay = .25
-
-    return frame_num, frame, f_delay
 
 
 def gen():
     """Video streaming generator function."""
-    tmpfile = os.path.join(p.MON_DIR, "temp.jpg")
-    base_delay = 0.05
-    t_delay = base_delay
-    stats = {}
 
-    while thread_manager.all_running:
+    print("Started display loop!")
 
-        stats.setdefault('dpm', round(p.DPM, 1))
-        stats.setdefault('delay', t_delay)
+    while tm.all_running:
 
-        frame_num, frame, frame_delay = get_frame(stats)
-        t_delay = 1 / (qs.ref_queue.qsize() + 2) + base_delay + frame_delay
+        time.sleep(tm.ps.BASE_DELAY)
+
+        frame_time, frame = tm.qs.get_frame()
+
+        # if queue was empty, skip
+        if not frame_time:
+            continue
 
         # convert to jpeg
-        Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).save(tmpfile)
-        with open(tmpfile, 'rb') as fp:
-            frame = fp.read()
+        print("CONVERT TO JPEG         ", end='\r')
+        frame = cv2.imencode('.jpg', frame)[1].tobytes()
 
+        print("YIELD              ", end='\r')
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-        time.sleep(t_delay)
+        print("YIELDED              ", end='\r')
 
 
 @app.route('/video_feed')
@@ -112,23 +67,42 @@ def video_feed():
 @app.route('/toggle_stream')
 def toggle_stream():
     """
-    Turn stream off or on, depending on the current state
+    Turn all threads on or off
     :return: None
     """
-    if thread_manager.all_running:
-        thread_manager.terminate_threads()
-        qs.clear_queues()
-    else:
-        thread_manager.start_threads()
+    tm.toggle_all()
+    return '', 204
 
-    return render_template('index.html')
+
+@app.route('/toggle_thread/<thread>')
+def toggle_thread(thread: str):
+    """Toggle running status of thread name from argument"""
+    print("Toggling: ", thread)
+    tm.toggle(thread)
+
+    return '', 204
+
+
+@app.route('/change_delay/<direction>')
+def change_delay(direction: str):
+
+    if direction == 'increase':
+        tm.ps.BASE_DELAY += .002
+        print(f"new delay: {tm.ps.BASE_DELAY}")
+
+    if direction == 'decrease':
+        tm.ps.BASE_DELAY = max(0, tm.ps.BASE_DELAY - .002)
+        print(f"new delay: {tm.ps.BASE_DELAY}")
+
+    return '', 204
 
 
 @socketio.on('connect')
 def handle_startup():
-    print("Socket connection is established!")
+    print("Socket connection is established on server!")
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)  # , threaded=True)  # , use_reloader=False)
-
+    tm.stop_all_threads()
+    tm.add_all_threads()
+    socketio.run(app, host='0.0.0.0', port=5000)

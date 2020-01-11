@@ -24,7 +24,6 @@ RUN pip install -r requirements.txt
 RUN pip3 install https://github.com/OlafenwaMoses/ImageAI/releases/download/2.0.3/imageai-2.0.3-py3-none-any.whl
 
 # Copy python code and custom objects file
-COPY ./capture_video.py ./
 COPY ./modules ./modules
 COPY ./settings ./settings
 COPY ./templates ./templates
@@ -40,7 +39,5 @@ ENV FLASK_APP=webapp.py
 ENV FLASK_ENV=development
 ENV FLASK_DEBUG=1
 
-
-#ENTRYPOINT ["python", "capture_video.py"]
 ENTRYPOINT ["python", "webapp.py"]
 
