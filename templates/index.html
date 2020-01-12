@@ -9,11 +9,9 @@
     <script src="{{ url_for('static', filename='traffic_monitor.js') }}"></script>
   </head>
   <body>
-    <!-- HEADER -->
-    <header class="row justify-content-left fixed-top">
-      <section class="col-12"><h1>Traffic Monitor</h1></section>
-    </header>
-    <!-- end HEADER -->
+
+  {% include "includes/header.html" %}
+
 
     <!-- Video and Detection Log ROW   -->
     <div class="row" style="height:3vh"></div>
@@ -21,33 +19,12 @@
 
       <!-- VIDEO WINDOW-->
       <div class="container col-xs-12 col-s-12 col-6  align-self-center">
-        <div class="img">
-          <img id="video_feed" class="img-fluid border border-secondary" src="{{ url_for('video_feed') }}">
-        </div>
+        {% include "includes/video_window.html" %}
       </div>
 
       <!-- DETECTION LOG-->
       <div class="container col-xs-12 col-s-12 col-6  align-self-center">
-
-          <h5>Detection Log</h5>
-          <div id="log_container" class="container border border-info" style="height:360px; overflow: scroll;">
-            <table class="table table-sm">
-              <thead>
-                <tr>
-                  <th scope="col">Time</th>
-                  <th scope="col">Object</th>
-                  <th scope="col">det/min</th>
-                </tr>
-              </thead>
-
-              <tbody id="log_body">
-
-              </tbody>
-
-            </table>
-          </div>
-
-
+        {% include "includes/detection_log.html" %}
       </div> <!-- END DETECTION LOG COLUMN -->
 
     </div> <!-- Video and Detection Log ROW -->
@@ -96,17 +73,10 @@
         </div> <!-- END ROW -->
     </div>
 
-    <!-- ROW  -->
-    <div class="container">
-      <h5>Application Log</h5>
-      <div id="app_log" class="col-12 border border-info" style="height:360px; overflow: scroll;">
 
-      </div>
-    </div>
+  {% include "includes/applog.html" %}
 
-
-{ % include "includes/footer.html" %}
-
+  {% include "includes/footer.html" %}
 
   </body>
 </html>

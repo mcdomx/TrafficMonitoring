@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/includes/footer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/applog.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/detection_log.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/header.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/video_window.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +119,7 @@
       <updated>1578147728445</updated>
       <workItem from="1578154541643" duration="127000" />
       <workItem from="1578154674976" duration="111074000" />
-      <workItem from="1578677372997" duration="28606000" />
+      <workItem from="1578677372997" duration="29375000" />
     </task>
     <servers />
   </component>
