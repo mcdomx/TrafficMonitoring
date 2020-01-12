@@ -2,28 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/modules/services/parameter_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capture_video.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/capture_video.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/capture_video.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/images/temp.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/detectors/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/detectors/detector_imageai.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector_imageai.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/parameters.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/queue_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/queue_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/streaming_service.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/logging_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/logging_thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/monitoring_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/monitoring_thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/thread_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/thread_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/video_capture_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/video_capture_thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/timers/elapsed_time.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/timers/elapsed_time.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/webapp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/footer.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,10 +12,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="CSS File" />
         <option value="JavaScript File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -134,7 +113,7 @@
       <updated>1578147728445</updated>
       <workItem from="1578154541643" duration="127000" />
       <workItem from="1578154674976" duration="111074000" />
-      <workItem from="1578677372997" duration="28460000" />
+      <workItem from="1578677372997" duration="28606000" />
     </task>
     <servers />
   </component>
