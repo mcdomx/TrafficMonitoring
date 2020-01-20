@@ -4,6 +4,7 @@ import time
 import cv2
 
 from modules.threads.thread import Thread
+from modules.services.queue_service import get_monitored_item
 
 
 class MonitorThread(Thread):
@@ -21,7 +22,7 @@ class MonitorThread(Thread):
         while self._running:
 
             time.sleep(60/self.tm.ps.DPM)  # need to pause to allow other threads to run
-            success, time_stamp, d_items, image = self.tm.qs.get_monitored_item()
+            success, time_stamp, d_items, image = get_monitored_item(self.tm.mon_queue)
 
             if success and (d_items & self.tm.ps.MON_OBJS):
                 cv2.imwrite(os.path.join(self.tm.ps.MON_DIR, "{}.png".format(time_stamp)), image)

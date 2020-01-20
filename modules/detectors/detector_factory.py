@@ -13,4 +13,6 @@ class DetectorFactory:
         """
 
         if detector_name == 'imageai':
-            return DetectorImageai(detector_name, model_name)
+            d = DetectorImageai(detector_name, model_name)
+            print(d)
+            return d

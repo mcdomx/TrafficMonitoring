@@ -6,7 +6,8 @@ from flask import Flask, render_template, Response
 from flask_socketio import SocketIO
 import cv2
 
-from modules.threads.thread_manager import ThreadManager
+from modules.services.service_manager import ServiceManager
+from modules.timers.elapsed_time import ElapsedTime
 
 # set global attributes
 app = Flask(__name__)
@@ -15,11 +16,11 @@ if not os.getenv("FLASK_APP"):
 
 socketio = SocketIO(app)
 
-# setup thread manager
-tm = ThreadManager(socketio)
+# setup a thread manager
+sm = ServiceManager(socketio)
 
 # TEMP - FOR DEVELOPMENT
-tm.ps.BASE_DELAY = .025
+sm.ps.BASE_DELAY = .045
 
 
 @app.route('/')
@@ -27,8 +28,8 @@ def index():
     """
     Video streaming home page.
     """
-    if not tm.all_running:
-        tm.start_all_threads()
+    if not sm.all_running:
+        sm.start_all_services()
     return render_template('index.html')
 
 
@@ -36,15 +37,20 @@ def gen():
     """Video streaming generator function."""
 
     print("Started display loop!")
+    elapsed_time = ElapsedTime()
 
-    while tm.all_running:
+    while sm.all_running:
 
-        time.sleep(tm.ps.BASE_DELAY)
+        # micro-nap until the display rate is reached
+        print("SLEEPING {} {}              ".format(sm.ps.BASE_DELAY, sm.get_queue_size()), end='\r')
+        time.sleep(sm.ps.BASE_DELAY)
+        print("DONE SLEEPING               ", end='\r')
 
-        frame_time, frame = tm.qs.get_frame()
+        success, frame = sm.get_frame()
 
         # if queue was empty, skip
-        if not frame_time:
+        if not success:
+            print("EMPTY QUEUE               ", end='\r')
             continue
 
         # convert to jpeg
@@ -70,7 +76,7 @@ def toggle_stream():
     Turn all threads on or off
     :return: None
     """
-    tm.toggle_all()
+    sm.toggle_all()
     return '', 204
 
 
@@ -78,7 +84,7 @@ def toggle_stream():
 def toggle_thread(thread: str):
     """Toggle running status of thread name from argument"""
     print("Toggling: ", thread)
-    tm.toggle(thread)
+    sm.toggle(thread)
 
     return '', 204
 
@@ -87,12 +93,12 @@ def toggle_thread(thread: str):
 def change_delay(direction: str):
 
     if direction == 'increase':
-        tm.ps.BASE_DELAY += .002
-        print(f"new delay: {tm.ps.BASE_DELAY}")
+        sm.ps.BASE_DELAY += .002
+        print(f"new delay: {sm.ps.BASE_DELAY}")
 
     if direction == 'decrease':
-        tm.ps.BASE_DELAY = max(0, tm.ps.BASE_DELAY - .002)
-        print(f"new delay: {tm.ps.BASE_DELAY}")
+        sm.ps.BASE_DELAY = max(0, sm.ps.BASE_DELAY - .002)
+        print(f"new delay: {sm.ps.BASE_DELAY}")
 
     return '', 204
 
@@ -103,6 +109,6 @@ def handle_startup():
 
 
 if __name__ == '__main__':
-    tm.stop_all_threads()
-    tm.add_all_threads()
+    sm.stop_all_services()  # stop all in case of flask restart
+    sm.add_all_services()  # services are added here and started when page is loaded
     socketio.run(app, host='0.0.0.0', port=5000)

@@ -14,6 +14,9 @@ class Detector(ABC):
         self._detector_name = detector_name
         self._model_name = model_name
 
+    def __str__(self):
+        return "Detector: {} // {}".format(self.DETECTOR_NAME, self.MODEL_NAME)
+
     @property
     def DETECTOR_NAME(self):
         return self._detector_name

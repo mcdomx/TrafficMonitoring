@@ -1,12 +1,14 @@
 import time
 import datetime
 import os
+import threading
 from collections import Counter
 import json
 
-from modules.threads.thread import Thread
+from flask_socketio import SocketIO
+
+from modules.services.service import Service
 from modules.timers.elapsed_time import ElapsedTime
-from modules.services.queue_service import get_detections
 
 
 def calc_avg_counts(minute_detections: list) -> dict:
@@ -51,17 +53,67 @@ def log_counts(cap_time, counts, filepath):
             fp.write('\n')
 
 
-class LoggingThread(Thread):
+class LoggingService(Service, threading.Thread):
     """
     Log detections to file.
-    At each interval (usu. 1 second) detections are added to a list.
+    After each detection, the detected items are logged.  After the
+    logging interval has expired, a summary of the items logged
+    is calculated and the averages over the time period are stored.
+
     This thread will convert that list into the averages for the
     logging period (usu. 1 minute).
+
+    Since this process must count detection statistics on a fixed interval,
+    this process is run as a thread to ensure that it calculates summaries
+    after the specified logging period and not only after a detection has
+    been made.
+
     """
 
-    def __init__(self, name: str, tm):
+    def __init__(self, name: str, log_filepath: str, dpm: float, socketio: SocketIO):
+        Service.__init__(self, name)
+        threading.Thread.__init__(self)
+        self.setName(name)
         self._elapsed_time = None
-        Thread.__init__(self, name, thread_mgr=tm)
+        self._detections = None
+        self._log_filepath = log_filepath
+        self._dpm = dpm
+        self._socketio = socketio
+
+    # GETTERS AND SETTERS
+
+    @property
+    def dpm(self):
+        return self._dpm
+
+    @dpm.setter
+    def dpm(self, val):
+        self._dpm = val
+
+    @property
+    def log_filepath(self):
+        return self._log_filepath
+
+    @log_filepath.setter
+    def log_filepath(self, val):
+        self._log_filepath = val
+
+    # END GETTERS AND SETTERS
+
+    def start(self):
+        self._running = True
+        threading.Thread.start(self)
+
+    def log_detections(self, detections: list):
+        """
+        Adds a list of detections that will be summarized when an
+        interval period has expired.
+        :return:
+        """
+        print("Adding detections: {}".format(len(detections)))
+        if not self._detections:
+            self._detections = []
+        self._detections.append(detections)
 
     def run(self):
         """
@@ -69,7 +121,7 @@ class LoggingThread(Thread):
         add detected items to dictionary
         """
         # clear any existing logging activity
-        self.tm.clear('detections_queue')
+        self._detections = None
 
         # start timer
         self._elapsed_time = ElapsedTime()
@@ -84,22 +136,28 @@ class LoggingThread(Thread):
                 time.sleep(1)
             minute_counter = self._elapsed_time.get()
 
+            if not self._detections:
+                print("No detections")
+                continue
+
+            print("Counting detections")
             # record time of count
             count_time = datetime.datetime.now()
 
-            # get all detections from queue
-            # det_list = self.tm.qs.get_detections()
-            det_list = get_detections(self.tm.detections_queue)
+            # get all detections from list and clear list
+            # det_list = get_detections(self.tm.detections_queue)
+            det_list = self._detections.copy()
+            self._detections = None
 
             # auto-throttle detection rate
-            self.tm.ps.DPM = len(det_list)
+            self.dpm = len(det_list)
 
             # convert detections to avg counts
             minute_averages = calc_avg_counts(det_list)
 
             # Log data to file
             if len(minute_averages) > 0:
-                log_counts(count_time, minute_averages, self.tm.ps.LOG_FILEPATH)
+                log_counts(count_time, minute_averages, self.log_filepath)
 
             # log to console
             print("\n\t{}   # detections: {}".format(count_time, len(det_list)))
@@ -116,5 +174,5 @@ class LoggingThread(Thread):
                                                                                          count_time.minute,
                                                                                          count_time.second)
 
-            self.tm.socketio.emit("update_log", json.dumps(minute_averages), broadcast=True)
+            self._socketio.emit("update_log", json.dumps(minute_averages), broadcast=True)
 

@@ -33,7 +33,7 @@ class DetectorImageai:
             """
             Required method of abstract class Detector.
             Arguments include frame number and frame.
-            Returns frame_number, detection overlayed frame and detection statistics
+            Returns frame_number, detection overlayed frame and detection list
             """
 
             # Perform detection on frame

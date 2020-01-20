@@ -4,6 +4,7 @@ import numpy as np
 from modules.detectors.detector_factory import DetectorFactory
 from modules.threads.thread import Thread
 from modules.timers.elapsed_time import ElapsedTime
+from modules.services.queue_service import add_frame, Frame
 
 
 def add_overlay(frame: np.array, stats: dict) -> np.array:
@@ -57,11 +58,10 @@ class VideoCaptureThread(Thread):
         print("Loaded detector!")
 
         # initialize loop variables
-        # frame_count = 0
+        frame_num = 0
 
         # open cam and start capture
         print("Starting cam ... ", end='\r')
-        # print(self.tm.ps.CAM_STREAM)
         cap = cv2.VideoCapture(self.tm.ps.CAM_STREAM)
 
         # main loop
@@ -76,21 +76,25 @@ class VideoCaptureThread(Thread):
         while cap.isOpened() and self._running:
 
             # loop until display fps reached
-            # c = 0
-            # while c < self.tm.ps.CAM_FPS / self.tm.ps.DISPLAY_FPS:
-            #     c += int(cap.grab())
+            c = 0
+            while c < self.tm.ps.CAM_FPS / self.tm.ps.DISPLAY_FPS:
+                c += int(cap.grab())
 
             # get next cam frame
             cur_frame = None
             while cur_frame is None:
                 _, cur_frame = cap.read()
-            # frame_count += 1
             last_pull_time = self._elapsed_time.get()
+            frame_num += 1
 
             stats = {'dpm': round(self.tm.ps.DPM, 1),
                      'delay': round(self.tm.ps.BASE_DELAY, 3),
-                     'buffer_size': self.tm.qs.get_qsize('ref_queue'),
+                     'buffer_size': self.tm.ref_queue.qsize(),
                      'elapsed_time': self._elapsed_time}
+
+            q = self.tm.undet_queue
+            detections = None
+            frame = cur_frame.copy()
 
             # if detection/inference is on, perform detections at detection rate
             if self.tm.ps.DETECTION and last_pull_time - last_detection_time >= 60 / self.tm.ps.DPM:
@@ -99,31 +103,22 @@ class VideoCaptureThread(Thread):
 
                 try:
                     # run detection on frame
-                    det_frame, detections = detector.detect(frame=cur_frame.copy())
-                    # add frame with detections
-                    # print("capture thread: adding detection frame ...")
-
-                    # add overlay
-                    print("ADD OVERLAY         ", end='\r')
-                    frame = add_overlay(det_frame, stats)
-
-                    self.tm.qs.add_frame(last_pull_time, frame, detections)
-                    # print("capture thread: added detection frame!")
+                    frame, detections = detector.detect(frame=cur_frame.copy())
+                    q = self.tm.det_queue
 
                 except Exception as e:
                     print("{} // run() DETECTION: {}".format(self.getName(), e))
 
-            else:
-                try:
-                    # print("capture thread: adding frame ...")
-                    # add overlay
-                    print("ADD OVERLAY         ", end='\r')
-                    frame = add_overlay(cur_frame.copy(), stats)
-                    self.tm.qs.add_frame(last_pull_time, frame)
-                    # print("capture thread: added frame!")
+            print("ADD OVERLAY         ", end='\r')
+            frame = add_overlay(frame, stats)
 
-                except Exception as e:
-                    print("{} // run() NO DETECTION: {}".format(self.getName(), e))
+            frame_tup = Frame(frame_num, last_pull_time, frame, q)
+
+            add_frame(frame=frame_tup,
+                      ref_queue=self.tm.ref_queue,
+                      detections=detections,
+                      detections_queue=self.tm.detections_queue,
+                      mon_queue=self.tm.mon_queue)
 
         # release camera upon exit
         cap.release()

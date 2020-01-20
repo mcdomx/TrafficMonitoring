@@ -58,6 +58,12 @@ Now build the docker container and run:
 
 	docker build -t tf_detection .
 	docker run -u $(id -u):$(id -g) -it --name traffic_monitor --net=host --rm -e DISPLAY=$LOCALIP:0  -e CAM_STREAM="0" -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v "$PWD"/logs:/app/logs tf_detection
+	
+to run with flask:
+
+	docker run -it --name traffic_monitor --rm -e CAM_STREAM="0" -v "$PWD"/logs:/app/logs -p 5000:5000 tf_detection
+
+flask site can be reached at: 127.0.0.1:5000
 
 Supported environment variables:<br>
 

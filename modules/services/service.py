@@ -1,8 +1,7 @@
 from abc import ABC
-import threading
 
 
-class Thread(threading.Thread, ABC):
+class Service(ABC):
     """
     Abstract class for a local thread.
     required methods:
@@ -10,11 +9,9 @@ class Thread(threading.Thread, ABC):
         - sets running to False for each thread causing loops to stop running
     """
 
-    def __init__(self, name, thread_mgr):
-        threading.Thread.__init__(self)
+    def __init__(self, name):
         self._name = name
         self._running = False
-        self.tm = thread_mgr
 
     def getName(self):
         return self._name
@@ -24,3 +21,6 @@ class Thread(threading.Thread, ABC):
 
     def stop(self):
         self._running = False
+
+    def start(self):
+        raise Exception("start() must be implemented for each service")
