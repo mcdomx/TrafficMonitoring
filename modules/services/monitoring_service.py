@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import time
 
 import cv2
 
@@ -18,11 +19,11 @@ class MonitorService(Service):
     setters.
 
     """
-    def __init__(self, name, dpm: float, mon_objs: set, mon_dir: str):
+    def __init__(self, name, detection_rate: float, objects: set, dir_path: str):
         Service.__init__(self, name)
-        self._dpm = dpm
-        self._mon_objs = mon_objs
-        self._mon_dir = mon_dir
+        self._dpm = detection_rate
+        self._mon_objs = objects
+        self._mon_dir = dir_path
 
     # GETTERS AND SETTERS ####################
     @property
@@ -54,15 +55,20 @@ class MonitorService(Service):
     def start(self):
         self._running = True
 
-    def evaluate(self, image: np.array, detections: list, time_stamp: float):
+    def evaluate(self, image: np.array, detections: list, frame_time: time):
         """
         Evaluates the list of detected items and saves the image if the
         image includes detections that should  be monitored.
         :param image: image that includes the detected items in 'detections' list
         :param detections: list of detections in corresponding image
-        :param time_stamp: time that corresponding image was captured
+        :param frame_time: time that corresponding image was captured
         :return: None
         """
+        time_stamp = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(frame_time))
+
+        # get unique name values of detected items
         d_items = {d.get('name') for d in detections}
+
+        # if any detected items are in the monitored objects, save image
         if d_items & self.mon_objs:
             cv2.imwrite(os.path.join(self.mon_dir, "{}.png".format(time_stamp)), image)

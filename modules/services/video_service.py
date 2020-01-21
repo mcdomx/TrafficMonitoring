@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import threading
 import queue
+import time
 from collections import namedtuple
 
 from modules.detectors.detector_factory import DetectorFactory
@@ -51,10 +52,10 @@ class VideoService(Service, threading.Thread):
                  name: str,
                  detector_name: str,
                  detector_model: str,
-                 cam_stream: str,
-                 cam_fps: float,
-                 display_fps: float,
-                 dpm: float,
+                 stream: str,
+                 cam_rate: float,
+                 display_rate: float,
+                 detection_rate: float,
                  base_delay: float,
                  buffer_size: int = 256):
         Service.__init__(self, name)
@@ -63,10 +64,10 @@ class VideoService(Service, threading.Thread):
         self._elapsed_time = None
         self._detector_name = detector_name
         self._detector_model = detector_model
-        self._cam_stream = cam_stream
-        self._cam_fps = cam_fps
-        self._display_fps = display_fps
-        self._dpm = dpm
+        self._cam_stream = stream
+        self._cam_fps = cam_rate
+        self._display_fps = display_rate
+        self._dpm = detection_rate
         self._base_delay = base_delay
 
         # queues
@@ -75,22 +76,21 @@ class VideoService(Service, threading.Thread):
         self._det_queue = queue.Queue(buffer_size)  # includes frames with processed detections
         self._undet_queue = queue.Queue(buffer_size)  # includes frame without detections
 
-
     # GETTERS AND SETTERS
     @property
-    def detector_name(self) -> str:
+    def det_name(self) -> str:
         return self._detector_name[0]
 
-    @detector_name.setter
-    def detector_name(self, val: str):
+    @det_name.setter
+    def det_name(self, val: str):
         self._detector_name = val
 
     @property
-    def detector_model(self) -> str:
+    def det_model(self) -> str:
         return self._detector_model[0]
 
-    @detector_model.setter
-    def detector_model(self, val: str):
+    @det_model.setter
+    def det_model(self, val: str):
         self._detector_model = val
 
     @property
@@ -171,7 +171,7 @@ class VideoService(Service, threading.Thread):
         Thread stops when capture is closed.
         """
         # get detector
-        detector = DetectorFactory.get(self.detector_name, self.detector_model)
+        detector = DetectorFactory.get(self.det_name, self.det_model)
         print("Loaded detector->  {}".format(detector))
 
         # initialize loop variables
@@ -229,7 +229,7 @@ class VideoService(Service, threading.Thread):
             print("ADD OVERLAY         ", end='\r')
             frame = add_overlay(frame, stats)
 
-            frame_tup = Frame(frame_num, last_pull_time, frame, q, detections)
+            frame_tup = Frame(frame_num, time.time(), frame, q, detections)
 
             self.add_frame(frame=frame_tup)
 

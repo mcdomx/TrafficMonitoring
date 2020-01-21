@@ -20,7 +20,7 @@ socketio = SocketIO(app)
 sm = ServiceManager(socketio)
 
 # TEMP - FOR DEVELOPMENT
-sm.ps.BASE_DELAY = .045
+sm.config.BASE_DELAY = .045
 
 
 @app.route('/')
@@ -42,9 +42,10 @@ def gen():
     while sm.all_running:
 
         # micro-nap until the display rate is reached
-        print("SLEEPING {} {}              ".format(sm.ps.BASE_DELAY, sm.get_queue_size()), end='\r')
-        time.sleep(sm.ps.BASE_DELAY)
-        print("DONE SLEEPING               ", end='\r')
+        sleep_time = sm.config.BASE_DELAY
+        print("SLEEPING {:04} {}              ".format(sleep_time, sm.get_queue_size()), end='\r')
+        time.sleep(sleep_time)
+        # print("DONE SLEEPING               ", end='\r')
 
         success, frame = sm.get_frame()
 
@@ -73,7 +74,7 @@ def video_feed():
 @app.route('/toggle_stream')
 def toggle_stream():
     """
-    Turn all threads on or off
+    Toggle the streaming display.  Logging and monitoring should continue.
     :return: None
     """
     sm.toggle_all()
@@ -93,12 +94,12 @@ def toggle_thread(thread: str):
 def change_delay(direction: str):
 
     if direction == 'increase':
-        sm.ps.BASE_DELAY += .002
-        print(f"new delay: {sm.ps.BASE_DELAY}")
+        sm.config.BASE_DELAY += .002
+        print(f"new delay: {sm.config.BASE_DELAY}")
 
     if direction == 'decrease':
-        sm.ps.BASE_DELAY = max(0, sm.ps.BASE_DELAY - .002)
-        print(f"new delay: {sm.ps.BASE_DELAY}")
+        sm.config.BASE_DELAY = max(0, sm.config.BASE_DELAY - .002)
+        print(f"new delay: {sm.config.BASE_DELAY}")
 
     return '', 204
 

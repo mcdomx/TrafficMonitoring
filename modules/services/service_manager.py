@@ -7,7 +7,7 @@ from modules.services.monitoring_service import MonitorService
 from modules.services.logging_service import LoggingService
 from modules.services.video_service import VideoService
 from modules.services.service import Service
-from modules.services.parameter_service import ParameterService
+from modules.services.config_service import Config
 
 
 class ServiceManager(object):
@@ -18,91 +18,106 @@ class ServiceManager(object):
     def __init__(self, socketio: SocketIO):
         self.all_running = False
         self.socketio = socketio
-        self.ps = ParameterService()
+        self.config = Config()
         self._monitor_service: MonitorService = self.get_monitor_service()
         self._logging_service: LoggingService = self.get_logging_service()
         self._video_service: VideoService = self.get_video_service()
 
     def get_frame(self) -> (bool, np.array):
-        success, image, detections, time_stamp = self._video_service.get_next_frame()
+        success, image, detections, frame_time = self._video_service.get_next_frame()
 
         if not success:
             return False, None
 
         if detections:
-            p_mon = Process(target=self._monitor_service.evaluate,
-                            args=(image, detections, time_stamp))
-            p_log = Process(target=self._logging_service.log_detections,
-                            kwargs={'detections': detections})
-            p_mon.start()
-            p_log.start()
-            p_mon.join()
-            p_log.join()
+
+            if self._logging_service:
+                self._logging_service.log_detections(detections)
+
+            if self._monitor_service:
+                # self._monitor_service.evaluate(image, detections, frame_time)
+                p_mon = Process(target=self._monitor_service.evaluate,
+                                kwargs={'image': image,
+                                        'detections': detections,
+                                        'frame_time': frame_time})
+                p_mon.start()
+                p_mon.join()
 
         return True, image
 
-    def get_monitor_service(self, name=None, dpm=None, mon_objs=None, mon_dir=None):
+    def get_monitor_service(self, name=None, detection_rate=None, objects=None, dir_path=None):
         if not name:
             name = "monitor-service"
-        if not dpm:
-            dpm = self.ps.DPM
-        if not mon_objs:
-            mon_objs = self.ps.MON_OBJS
-        if not mon_dir:
-            mon_dir = self.ps.MON_DIR
+        if not detection_rate:
+            detection_rate = self.config.DPM
+        if not objects:
+            objects = self.config.MON_OBJS
+        if not dir_path:
+            dir_path = self.config.MON_DIR
         print("SERVICE: Adding '{}'".format(name))
-        return MonitorService(name, dpm, mon_objs, mon_dir)
+        return MonitorService(name=name,
+                              detection_rate=detection_rate,
+                              objects=objects,
+                              dir_path=dir_path)
 
-    def get_logging_service(self, name=None, dpm=None, log_filepath=None, socketio=None):
+    def get_logging_service(self,
+                            name=None,
+                            detection_rate=None,
+                            file_path=None,
+                            socketio=None):
         if not name:
             name = "logging-service"
-        if not dpm:
-            dpm = self.ps.DPM
-        if not log_filepath:
-            log_filepath = self.ps.LOG_FILEPATH
+        if not detection_rate:
+            detection_rate = self.config.DPM
+        if not file_path:
+            file_path = self.config.LOG_FILEPATH
         if not socketio:
             socketio = self.socketio
         print("SERVICE: Adding '{}'".format(name))
-        return LoggingService(name, dpm, log_filepath, socketio)
+        return LoggingService(name=name,
+                              detection_rate=detection_rate,
+                              file_path=file_path,
+                              socketio=socketio)
 
     def get_video_service(self, name=None,
                           detector_name=None,
                           detector_model=None,
                           base_delay=None,
-                          cam_fps=None,
-                          cam_stream=None,
-                          display_fps=None,
-                          dpm=None):
+                          cam_rate=None,
+                          stream=None,
+                          display_rate=None,
+                          detection_rate=None):
         if not name:
             name = "video-service"
         if not detector_name:
-            detector_name = self.ps.DETECTOR_NAME,
+            detector_name = self.config.DETECTOR_NAME,
         if not detector_model:
-            detector_model = self.ps.DETECTOR_MODEL,
+            detector_model = self.config.DETECTOR_MODEL,
         if not base_delay:
-            base_delay = self.ps.BASE_DELAY,
-        if not cam_fps:
-            cam_fps = self.ps.CAM_FPS,
-        if not cam_stream:
-            cam_stream = self.ps.CAM_STREAM,
-        if not display_fps:
-            display_fps = self.ps.DISPLAY_FPS,
-        if not dpm:
-            dpm = self.ps.DPM
+            base_delay = self.config.BASE_DELAY,
+        if not cam_rate:
+            cam_rate = self.config.CAM_FPS,
+        if not stream:
+            stream = self.config.CAM_STREAM,
+        if not display_rate:
+            display_rate = self.config.DISPLAY_FPS,
+        if not detection_rate:
+            detection_rate = self.config.DPM
         print("SERVICE: Adding '{}'".format(name))
         return VideoService(name=name,
                             detector_name=detector_name,
                             detector_model=detector_model,
                             base_delay=base_delay,
-                            cam_fps=cam_fps,
-                            cam_stream=cam_stream,
-                            display_fps=display_fps, dpm=dpm)
+                            cam_rate=cam_rate,
+                            stream=stream,
+                            display_rate=display_rate,
+                            detection_rate=detection_rate)
 
     def add_service(self, s: str) -> Service:
-        if s == "monitoring":
+        if s == "monitor":
             self._monitor_service = self.get_monitor_service()
             return self._monitor_service
-        elif s == "logging":
+        elif s == "log":
             self._logging_service = self.get_logging_service()
             return self._logging_service
         elif s == "video":
@@ -112,19 +127,32 @@ class ServiceManager(object):
             raise Exception("service_manager:add_service(): '{}' service does not exist!".format(s))
 
     def add_all_services(self):
-        for s in ("logging", "monitoring", "video"):
+        for s in ("log", "monitor", "video"):
             self.add_service(s)
 
-    def start_service(self, service: Service):
+    def start_service(self, s):
         """
         Starts a service's thread, if the service supports
         threading.
         """
-        if not service:
-            raise Exception("service_manager:start_service(): Service not added!")
+        if type(s) == str:
+            if s == "monitor":
+                self._monitor_service.start()
+            elif s == "log":
+                self._logging_service.start()
+            elif s == "video":
+                self._video_service.start()
 
-        service.start()
-        print("THREAD: {} > Started!".format(service.getName()))
+        elif type(s) == MonitorService:
+            self._monitor_service.start()
+        elif type(s) == LoggingService:
+            self._logging_service.start()
+        elif type(s) == VideoService:
+            self._video_service.start()
+        else:
+            raise Exception("THREAD: {} > Not Recognized - Nothing started!!".format(s.getName()))
+
+        print("THREAD: {} > Started!".format(s.getName()))
 
     def start_all_services(self):
         """
@@ -137,39 +165,62 @@ class ServiceManager(object):
             self.start_service(s)
         self.all_running = True
 
-    def stop_service(self, service: Service):
+    def stop_service(self, s):
 
-        if not service:
-            print("SERVICE: service already stopped")
+        def kill(x):
 
-        print("SERVICE: Stopping '{}' ... ".format(service.getName()), end='')
-        service.stop()  # signal thread to stop
+            if not x:
+                print("SERVICE: '{}' was not running.")
+                return
 
-        if type(service) == MonitorService:
+            print("SERVICE: Stopping '{}' ... ".format(x.getName()), end='')
+            x.stop()  # signal service to stop
+            del x     # delete service object
+            print("STOPPED!")
+
+        if type(s) == str:
+            if s == "monitor":
+                kill(self._monitor_service)
+                self._monitor_service = None
+            elif s == "log":
+                kill(self._logging_service)
+                self._logging_service = None
+            elif s == "video":
+                kill(self._video_service)
+                self._video_service = None
+        elif type(s) == MonitorService:
+            kill(self._monitor_service)
             self._monitor_service = None
-        elif type(service) == LoggingService:
+        elif type(s) == LoggingService:
+            kill(self._logging_service)
             self._logging_service = None
-        elif type(service) == VideoService:
+        elif type(s) == VideoService:
+            kill(self._video_service)
             self._video_service = None
 
-        print("STOPPED!")
+        else:
+            raise Exception("service_manager:stop_service(): '{}' service does not exist!".format(s))
 
     def stop_all_services(self):
         """
         Stop all services currently active
-        :return:
+        :return: None
         """
-        self.stop_service(self._monitor_service)
-        self.stop_service(self._logging_service)
-        self.stop_service(self._video_service)
+        if self._monitor_service:
+            self.stop_service(self._monitor_service)
+        if self._logging_service:
+            self.stop_service(self._logging_service)
+        if self._video_service:
+            self.stop_service(self._video_service)
+
         self.all_running = False
         print("All threads stopped!")
 
     def toggle(self, s: str):
-        if s == "monitoring" and self._monitor_service:
+        if s == "monitor" and self._monitor_service:
             self.stop_service(self._monitor_service)
             return
-        elif s == "logging" and self._logging_service:
+        elif s == "log" and self._logging_service:
             self.stop_service(self._logging_service)
             return
         elif s == "video" and self._video_service:
@@ -194,65 +245,3 @@ class ServiceManager(object):
 
     def get_queue_size(self):
         return self._video_service.get_queue_size()
-
-    # @staticmethod
-    # def _add_detection(detections_queue: queue.Queue, detections: list) -> None:
-    #     """add a detection to detections queue. clear an item if queue is full."""
-    #     # print("queue_service: adding to detections ...")
-    #     print("ADD DETECTION         ", end='\r')
-    #     try:
-    #         detections_queue.put(detections, block=True, timeout=1 / 60)
-    #     except queue.Full:
-    #         # if full, remove an item to make room and add new item
-    #         _ = detections_queue.get(block=False)  # True, timeout=1 / 60)
-    #         detections_queue.task_done()
-    #         detections_queue.put(detections)
-    #     # print("queue_service: added to detections!")
-
-    # @staticmethod
-    # def _add_to_monitor(mon_queue: Queue, t: time, detections: list, f: np.array) -> None:
-    #     """add to monitored items queue. monitor thread will determine if
-    #     item needs to be monitored or not.  All detections will be put
-    #     into this queue."""
-    #     print("ADD TO MONITOR       ", end='\r')
-    #     d_items = {d.get('name') for d in detections}  # make set of names
-    #     # print("queue_service: adding to monitor ...")
-    #     try:
-    #         mon_queue.put({"t": t, "d": set(d_items), "f": f}, block=True, timeout=1 / 60)
-    #     except queue.Full:
-    #         # if full, remove an item to make room and add new item
-    #         _ = mon_queue.get(block=False)  # True, timeout=1 / 60)
-    #         mon_queue.task_done()
-    #         mon_queue.put({"t": t, "d": set(d_items), "f": f})
-    #     # print("queue_service: added to monitor!")
-
-    # @staticmethod
-    # def get_monitored_item(mon_queue: Queue) -> (bool, float, set, np.array):
-    #     """return item from monitored items queue"""
-    #     print("GET MONITORED ITEM    ", end='\r')
-    #     try:
-    #         d_elems = mon_queue.get(
-    #             block=False)  # block=True, timeout=1 / 60)  # need to allow pass in case of shutdown
-    #         # mon_queue.task_done()
-    #         time_stamp = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(d_elems.get('t')))
-    #
-    #         d_items = d_elems.get('d')
-    #
-    #         return True, time_stamp, d_items, d_elems.get('f')
-    #
-    #     # except queue.Empty:
-    #     except Exception:
-    #         return False, None, None, None
-
-    # @staticmethod
-    # def get_detections(detections_queue: queue.Queue) -> list:
-    #     """get all detections from queue as a list"""
-    #     print("GET ALL DETECTIONS   ", end='\r')
-    #     det_list = []
-    #
-    #     while not detections_queue.empty():
-    #         det_list.append(detections_queue.get())
-    #         detections_queue.task_done()
-    #
-    #     return det_list
-    #

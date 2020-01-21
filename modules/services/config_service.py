@@ -113,21 +113,12 @@ def get_camfps(cam: str) -> float:
 # END CAMERA FUNCTIONS ##########################
 
 
-class ParameterService(object):
+class Config(object):
     """
-    Singleton of all program parameters.
-    Some are from environment variables and some are from files.
+    Holds video streaming and detection parameters.
+    Defaults are from environment variables and some are from files.
+    Where environment variables are not set, default values are provided.
     """
-    # _s = None  # singleton instance
-    #
-    # def __new__(cls):
-    #     if cls._s is None:
-    #         cls._s = super(ParameterService, cls).__new__(cls).__Singleton()
-    #         print(cls._s)
-    #
-    #     return cls._s
-    #
-    # class __Singleton:
     def __init__(self):
         self._CAM_STREAM: str = get_cam_name(os.getenv("CAM_STREAM", 0))
         self._CAM_FPS: float = get_camfps(self.CAM_STREAM)
