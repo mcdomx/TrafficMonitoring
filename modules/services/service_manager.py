@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 from multiprocessing import Process
 
@@ -8,6 +9,8 @@ from modules.services.logging_service import LoggingService
 from modules.services.video_service import VideoService
 from modules.services.service import Service
 from modules.services.config_service import Config
+
+logger = logging.getLogger('app')
 
 
 class ServiceManager(object):
@@ -54,7 +57,7 @@ class ServiceManager(object):
             objects = self.config.MON_OBJS
         if not dir_path:
             dir_path = self.config.MON_DIR
-        print("SERVICE: Adding '{}'".format(name))
+        # print("SERVICE: Adding '{}'".format(name))
         return MonitorService(name=name,
                               detection_rate=detection_rate,
                               objects=objects,
@@ -73,7 +76,7 @@ class ServiceManager(object):
             file_path = self.config.LOG_FILEPATH
         if not socketio:
             socketio = self.socketio
-        print("SERVICE: Adding '{}'".format(name))
+
         return LoggingService(name=name,
                               detection_rate=detection_rate,
                               file_path=file_path,
@@ -103,7 +106,7 @@ class ServiceManager(object):
             display_rate = self.config.DISPLAY_FPS,
         if not detection_rate:
             detection_rate = self.config.DPM
-        print("SERVICE: Adding '{}'".format(name))
+        # print("SERVICE: Adding '{}'".format(name))
         return VideoService(name=name,
                             detector_name=detector_name,
                             detector_model=detector_model,
@@ -114,17 +117,21 @@ class ServiceManager(object):
                             detection_rate=detection_rate)
 
     def add_service(self, s: str) -> Service:
+
         if s == "monitor":
-            self._monitor_service = self.get_monitor_service()
-            return self._monitor_service
+            added_service = self._monitor_service = self.get_monitor_service()
+            # return self._monitor_service
         elif s == "log":
-            self._logging_service = self.get_logging_service()
-            return self._logging_service
+            added_service = self._logging_service = self.get_logging_service()
+            # return self._logging_service
         elif s == "video":
-            self._video_service = self.get_video_service()
-            return self._video_service
+            added_service = self._video_service = self.get_video_service()
+            # return self._video_service
         else:
             raise Exception("service_manager:add_service(): '{}' service does not exist!".format(s))
+
+        logger.info("SERVICE: Adding '{}'".format(s))
+        return added_service
 
     def add_all_services(self):
         for s in ("log", "monitor", "video"):
@@ -150,9 +157,9 @@ class ServiceManager(object):
         elif type(s) == VideoService:
             self._video_service.start()
         else:
-            raise Exception("THREAD: {} > Not Recognized - Nothing started!!".format(s.getName()))
+            raise Exception("SERVICE: {} > Not Recognized - Nothing started!!".format(s.getName()))
 
-        print("THREAD: {} > Started!".format(s.getName()))
+        logger.info("SERVICE: {} > Started!".format(s.getName()))
 
     def start_all_services(self):
         """
@@ -170,13 +177,12 @@ class ServiceManager(object):
         def kill(x):
 
             if not x:
-                print("SERVICE: '{}' was not running.")
+                logger.warning("SERVICE: '{}' was not running.")
                 return
 
-            print("SERVICE: Stopping '{}' ... ".format(x.getName()), end='')
             x.stop()  # signal service to stop
-            del x     # delete service object
-            print("STOPPED!")
+            logger.info("SERVICE: Stopped '{}'".format(x.getName()))
+            del x  # delete service object
 
         if type(s) == str:
             if s == "monitor":
@@ -214,7 +220,7 @@ class ServiceManager(object):
             self.stop_service(self._video_service)
 
         self.all_running = False
-        print("All threads stopped!")
+        logger.info("All threads stopped!")
 
     def toggle(self, s: str):
         if s == "monitor" and self._monitor_service:

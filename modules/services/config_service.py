@@ -9,10 +9,13 @@ variable values through accessors only.
 """
 import os
 import json
+import logging
 
 import pafy
 import cv2
 import numpy as np
+
+logger = logging.getLogger('app')
 
 
 # Access Data in Files

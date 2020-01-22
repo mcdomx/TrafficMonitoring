@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import time
+import logging
 
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO
@@ -8,6 +9,14 @@ import cv2
 
 from modules.services.service_manager import ServiceManager
 from modules.timers.elapsed_time import ElapsedTime
+
+
+logger = logging.getLogger('app')
+logger.setLevel(level=logging.DEBUG)
+
+logger.debug("Logger DEBUG test")
+logger.info("Logger DEBUG test")
+
 
 # set global attributes
 app = Flask(__name__)
@@ -36,7 +45,7 @@ def index():
 def gen():
     """Video streaming generator function."""
 
-    print("Started display loop!")
+    logger.info("Started display loop!")
     elapsed_time = ElapsedTime()
 
     while sm.all_running:
@@ -84,9 +93,7 @@ def toggle_stream():
 @app.route('/toggle_thread/<thread>')
 def toggle_thread(thread: str):
     """Toggle running status of thread name from argument"""
-    print("Toggling: ", thread)
     sm.toggle(thread)
-
     return '', 204
 
 
@@ -95,18 +102,18 @@ def change_delay(direction: str):
 
     if direction == 'increase':
         sm.config.BASE_DELAY += .002
-        print(f"new delay: {sm.config.BASE_DELAY}")
+        logger.info(f"new delay: {sm.config.BASE_DELAY}")
 
     if direction == 'decrease':
         sm.config.BASE_DELAY = max(0, sm.config.BASE_DELAY - .002)
-        print(f"new delay: {sm.config.BASE_DELAY}")
+        logger.info(f"new delay: {sm.config.BASE_DELAY}")
 
     return '', 204
 
 
 @socketio.on('connect')
 def handle_startup():
-    print("Socket connection is established on server!")
+    logger.info("Socket connection is established on server!")
 
 
 if __name__ == '__main__':

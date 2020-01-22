@@ -2,21 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/static/menu.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/includes/menu.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/monitoring_logging.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/detectors/detector_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector_factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/logging_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/logging_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/monitoring_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/monitoring_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/parameter_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/config_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/services/config_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/config_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/services/service_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/service_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/video_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/video_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/logging_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/logging_thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/monitoring_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/monitoring_thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/thread.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/thread_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/thread_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/video_capture_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/threads/video_capture_thread.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/webapp.py" afterDir="false" />
     </list>
@@ -29,9 +19,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -133,7 +123,7 @@
       <workItem from="1578154674976" duration="111074000" />
       <workItem from="1578677372997" duration="29375000" />
       <workItem from="1579011018006" duration="49648000" />
-      <workItem from="1579524383015" duration="20695000" />
+      <workItem from="1579524383015" duration="26507000" />
     </task>
     <servers />
   </component>
