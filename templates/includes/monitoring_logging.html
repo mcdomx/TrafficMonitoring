@@ -4,7 +4,7 @@
   <div class="card">
     <div class="card-header" id="headingMonitor">
       <h5 class="mb-0">
-        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseMonitor" aria-expanded="false" aria-controls="collapseMonitor">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseMonitor" aria-expanded="false" aria-controls="collapseMonitor">
           <div>Monitoring: <span id="monitoring_status">ON</span></div>
           <a href="{{ url_for('toggle_thread', thread='monitor') }}">
             <button type="button" id="btn_toggle_monitoring" class="btn btn-success">ON/OFF</button>
@@ -12,12 +12,19 @@
         </button>
       </h5>
     </div>
-    <div id="collapseMonitor" class="collapse show" aria-labelledby="headingMonitor" data-parent="#accordion">
+    <div id="collapseMonitor" class="collapse" aria-labelledby="headingMonitor" data-parent="#accordion">
       <div class="card-body">
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="mon_item">
-          <label class="form-check-label" for="mon_item">Mon Item</label>
-        </div>
+        {% for k, v in mon_objs.items() %}
+          <a href="{{ url_for('toggle_monitem', log_object=k) }}">
+
+              {% if v == "valid" %}
+                <div onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}">ON</span></div>
+              {% else %}
+                <div onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}">OFF</span></div>
+              {% endif %}
+
+          </a>
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -35,10 +42,18 @@
     </div>
     <div id="collapseLog" class="collapse" aria-labelledby="headingLog" data-parent="#accordion">
       <div class="card-body">
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="log_item">
-          <label class="form-check-label" for="log_item">Log Item</label>
-        </div>
+        {% for k, v in det_objs.items() %}
+          <a href="{{ url_for('toggle_detitem', log_object=k) }}">
+            <div class="form-check">
+              {% if v == "valid" %}
+                <input type="checkbox" class="form-check-input" id="det_{{ k }}" onchange="checkbox_click(this)" checked>
+              {% else %}
+                <input type="checkbox" class="form-check-input" id="det_{{ k }}" onchange="checkbox_click(this)">
+              {% endif %}
+              <label class="form-check-label" for="det_{{ k }}">{{ k }}</label>
+            </div>
+          </a>
+        {% endfor %}
       </div>
     </div>
   </div>

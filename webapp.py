@@ -12,10 +12,12 @@ from modules.timers.elapsed_time import ElapsedTime
 
 
 logger = logging.getLogger('app')
+formatter = logging.Formatter('%(asctime)-19s - %(module)-15s - %(levelname)s - %(message)s')
 logger.setLevel(level=logging.DEBUG)
-
-logger.debug("Logger DEBUG test")
-logger.info("Logger DEBUG test")
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 # set global attributes
@@ -39,7 +41,7 @@ def index():
     """
     if not sm.all_running:
         sm.start_all_services()
-    return render_template('index.html')
+    return render_template('index.html', mon_objs=sm.config.MON_OBJS_ALL, det_objs=sm.config.DET_OBJS_ALL)
 
 
 def gen():
@@ -108,6 +110,18 @@ def change_delay(direction: str):
         sm.config.BASE_DELAY = max(0, sm.config.BASE_DELAY - .002)
         logger.info(f"new delay: {sm.config.BASE_DELAY}")
 
+    return '', 204
+
+
+@app.route('/toggle_monitem/<log_object>')
+def toggle_monitem(log_object: str):
+    logger.info("MONITOR LOGITEM UPDATE: {}".format(log_object))
+    return '', 204
+
+
+@app.route('/toggle_detitem/<log_object>')
+def toggle_detitem(log_object: str):
+    logger.info("DETECTION LOGITEM UPDATE: {}".format(log_object))
     return '', 204
 
 

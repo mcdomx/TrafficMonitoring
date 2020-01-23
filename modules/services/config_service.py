@@ -19,23 +19,34 @@ logger = logging.getLogger('app')
 
 
 # Access Data in Files
-def __read_object_file(file_name) -> set:
+def __read_object_file(file_name) -> dict:
     """
-    Returns all items in an object file that are set to valid.
+    Returns all items in an object file and their validity.
+    Valid objects are being monitored.
     File is a json dict: {<object>:"valid"|"invalid"}
     """
     with open(file_name, 'r') as fp:
-        mon_dict = json.load(fp)
-
-    return {k.strip() for k, v in mon_dict.items() if v == 'valid'}
+        all_objects = json.load(fp)
+    return all_objects
 
 
 def get_monitored_objects(file_name=os.path.join('.', 'settings', 'monitor_objects.json')) -> set:
+    all_objects = __read_object_file(file_name)
+    return {k.strip() for k, v in all_objects.items() if v == 'valid'}
+
+
+def get_monitored_objects_all(file_name=os.path.join('.', 'settings', 'monitor_objects.json')) -> dict:
     return __read_object_file(file_name)
 
 
 def get_detected_objects(file_name=os.path.join('.', 'settings', 'detect_objects.json')) -> set:
+    all_objects = __read_object_file(file_name)
+    return {k.strip() for k, v in all_objects.items() if v == 'valid'}
+
+
+def get_detected_objects_all(file_name=os.path.join('.', 'settings', 'detect_objects.json')) -> dict:
     return __read_object_file(file_name)
+
 
 # END FILE ACCESS FUNCTIONS
 
@@ -81,10 +92,10 @@ def get_cam_name(cam: str) -> str:
 
         if read_pass:
             cam = stream.url
-            print("YouTube Video Stream Detected!")
-            print("Video Resolution : {}".format(stream.resolution))
+            logger.info("YouTube Video Stream Detected!")
+            logger.info("Video Resolution : {}".format(stream.resolution))
 
-    print("Video Test       : {}".format("OK" if read_pass else "FAIL - check that streamer is publishing"))
+    logger.info("Video Test       : {}".format("OK" if read_pass else "FAIL - check that streamer is publishing"))
 
     if not read_pass:
         raise Exception("Can't acquire video source: {}".format(cam))
@@ -135,10 +146,13 @@ class Config(object):
         self._MONITORING: bool = True if os.getenv("MONITORING", "True") == "True" else False
         self._MON_DIR: str = os.getenv("MON_DIR", os.path.join('.', 'logs', 'images'))
         self._MON_OBJS: set = get_monitored_objects()
+        self._MON_OBJS_ALL: dict = get_monitored_objects_all()
+        self._DET_OBJS: set = get_detected_objects()
+        self._DET_OBJS_ALL: dict = get_detected_objects_all()
         self._SHOW_VIDEO: bool = True if os.getenv("SHOW_VIDEO", "True") == "True" else False
         self._BASE_DELAY: float = 0.000
 
-        print("Parameter Service Established")
+        logger.info("Parameter Service Established")
 
     def __str__(self):
         rv = "TRAFFIC DETECTION PARAMETERS:\n"
@@ -267,6 +281,30 @@ class Config(object):
     @MON_OBJS.setter
     def MON_OBJS(self, val: set) -> None:
         self._MON_OBJS = val
+
+    @property
+    def MON_OBJS_ALL(self) -> dict:
+        return self._MON_OBJS_ALL
+
+    @MON_OBJS_ALL.setter
+    def MON_OBJS_ALL(self, val: dict) -> None:
+        self._MON_OBJS_ALL = val
+
+    @property
+    def DET_OBJS(self) -> set:
+        return self._DET_OBJS
+
+    @DET_OBJS.setter
+    def DET_OBJS(self, val: set) -> None:
+        self._DET_OBJS = val
+
+    @property
+    def DET_OBJS_ALL(self) -> dict:
+        return self._DET_OBJS_ALL
+
+    @DET_OBJS_ALL.setter
+    def DET_OBJS_ALL(self, val: dict) -> None:
+        self._DET_OBJS_ALL = val
 
     @property
     def SHOW_VIDEO(self) -> bool:

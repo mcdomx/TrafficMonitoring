@@ -1,10 +1,12 @@
 
+const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
 // ########################  begin DOMContentLoaded ########################
 document.addEventListener('DOMContentLoaded', () => {
 
-  const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
   socket.on('connect', () => {
-    console.log("location.protocol + '//' + document.domain + ':' + location.port")
+    log_text(location.protocol + '//' + document.domain + ':' + location.port);
     log_text("Socket connected on client!")
   }); // end on connect
 
@@ -63,8 +65,17 @@ function toggle_ONOFF(btn_id) {
   }
 }
 
-
 // END BUTTON TOGGLES #############################
+
+
+// CHECK BOXES #############################
+function checkbox_click(checkboxElem) {
+  let val = checkboxElem.id.split("_");
+  log_text("item checked: " + val[0] + " " + val[1] + " " + checkboxElem.checked)
+  socket.emit(val[0], val[1])
+}
+// END CHECK BOXES #############################
+
 
 // LOG LISTING ################################
 function setup_log_listing(socket) {
@@ -132,7 +143,7 @@ function update_log(log_data) {
     // if entries greater than max setting, remove oldest entry
 
     if (log_body.childElementCount > 100) {
-      log_text("Removed log item ... ")
+      log_text("Removed log item ... ");
       log_body.removeChild(log_body.childNodes[0]);
     }
   } // end for loop

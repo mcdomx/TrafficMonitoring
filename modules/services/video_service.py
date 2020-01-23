@@ -3,11 +3,14 @@ import numpy as np
 import threading
 import queue
 import time
+import logging
 from collections import namedtuple
 
 from modules.detectors.detector_factory import DetectorFactory
 from modules.timers.elapsed_time import ElapsedTime
 from modules.services.service import Service
+
+logger = logging.getLogger('app')
 
 Frame = namedtuple("Frame", ['num', 'time', 'image', 'queue', 'detections'])
 
@@ -172,19 +175,19 @@ class VideoService(Service, threading.Thread):
         """
         # get detector
         detector = DetectorFactory.get(self.det_name, self.det_model)
-        print("Loaded detector->  {}".format(detector))
+        logger.info("Loaded detector->  {}".format(detector))
 
         # initialize loop variables
         frame_num = 0
 
         # open cam and start capture
-        print("Starting cam ... ", end='\r')
+        logger.info("Starting cam ... ")
         cap = cv2.VideoCapture(self.cam_stream)
 
         # main loop
         self._running = True
         if self._running and cap.isOpened():
-            print("CAM STARTED!")
+            logger.info("\tCAM STARTED!")
 
         # start timer
         self._elapsed_time = ElapsedTime()
@@ -224,7 +227,7 @@ class VideoService(Service, threading.Thread):
                     q = self._det_queue
 
                 except Exception as e:
-                    print("{} // run() DETECTION: {}".format(self.getName(), e))
+                    logger.error("{} // run() DETECTION: {}".format(self.getName(), e))
 
             print("ADD OVERLAY         ", end='\r')
             frame = add_overlay(frame, stats)

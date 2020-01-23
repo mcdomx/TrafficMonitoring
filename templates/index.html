@@ -49,38 +49,17 @@
             </a>
 
           </div>
-        </div> <!-- END ROW -->
+        </div>
     </div>
-
-
-    <!-- ROW  -->
-<!--    <div class="container">-->
-<!--        <h5>Thread Control</h5>-->
-<!--        <div class="row">-->
-<!--          <div class="col align-self-end">-->
-<!--              <div>Monitoring: <span id="monitoring_status">ON</span></div>-->
-<!--              <a href="{{ url_for('toggle_thread', thread='monitor') }}">-->
-<!--                <button type="button" id="btn_toggle_monitoring" class="btn btn-success">ON/OFF</button>-->
-<!--              </a>-->
-
-<!--              <div>Logging: <span id="logging_status">ON</span></div>-->
-<!--              <a href="{{ url_for('toggle_thread', thread='log') }}">-->
-<!--                <button type="button" id="btn_toggle_logging" class="btn btn-success">ON/OFF</button>-->
-<!--              </a>-->
-
-
-
-<!--          </div>-->
-<!--        </div> -->
-<!--    </div> -->
     <!-- END ROW -->
 
   <div class="container col-xs-12 col-s-12 col-6  align-self-center">
     {% include "includes/monitoring_logging.html" %}
   </div>
 
-
-  {% include "includes/applog.html" %}
+  <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+    {% include "includes/applog.html" %}
+  </div>
 
   {% include "includes/footer.html" %}
 

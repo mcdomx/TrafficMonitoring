@@ -4,11 +4,14 @@ import os
 import threading
 from collections import Counter
 import json
+import logging
 
 from flask_socketio import SocketIO
 
 from modules.services.service import Service
 from modules.timers.elapsed_time import ElapsedTime
+
+logger = logging.getLogger('app')
 
 
 class LoggingService(Service, threading.Thread):
@@ -87,7 +90,7 @@ class LoggingService(Service, threading.Thread):
 
         self._running = True
 
-        print("Started logging loop!")
+        logger.info("Started logging loop!")
 
         while self._running:
 
@@ -97,10 +100,10 @@ class LoggingService(Service, threading.Thread):
             # minute_counter = self._elapsed_time.get()
 
             if not self._detections:
-                print("No detections")
+                logger.info("No detections")
                 continue
 
-            print("Counting detections")
+            logger.info("Counting detections")
             # record time of count
             count_time = datetime.datetime.now()
 
@@ -119,11 +122,11 @@ class LoggingService(Service, threading.Thread):
                 _log_counts(count_time, minute_averages, self.log_filepath)
 
             # log to console
-            print("\n\t{}   # detections: {}".format(count_time, len(det_list)))
-            print("\tAvg/Min: ", end='')
+            logger.info("Detections: {}".format(len(det_list)))
+            output = "--> Avg/Min: "
             for k, v in minute_averages.items():
-                print("{}:{}".format(k, round(v, 2)), end='  ')
-            print("")
+                output += "{}:{}  ".format(k, round(v, 2))
+            logger.info("{}".format(output))
 
             # emit
             minute_averages['time_stamp'] = '{:04}-{:02}-{:02} {:02}:{:02}:{:02}'.format(count_time.year,
