@@ -28,3 +28,11 @@ p {
   text-align: justify;
   margin: 0px;
 }
+
+.monloglink:hover {
+  color: black;
+}
+
+.monloglink:hover {
+  color: orange;
+}

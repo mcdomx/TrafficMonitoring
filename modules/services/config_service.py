@@ -282,6 +282,20 @@ class Config(object):
     def MON_OBJS(self, val: set) -> None:
         self._MON_OBJS = val
 
+    def add_mon_obj(self, obj: str):
+        self._MON_OBJS.add(obj)
+        self._MON_OBJS_ALL.update({obj: 'valid'})
+
+    def del_mon_obj(self, obj: str):
+        self._MON_OBJS.remove(obj)
+        self._MON_OBJS_ALL.update({obj: 'invalid'})
+
+    def is_monitored(self, obj: str) -> bool:
+        if obj in self.MON_OBJS:
+            return True
+        else:
+            return False
+
     @property
     def MON_OBJS_ALL(self) -> dict:
         return self._MON_OBJS_ALL
@@ -305,6 +319,20 @@ class Config(object):
     @DET_OBJS_ALL.setter
     def DET_OBJS_ALL(self, val: dict) -> None:
         self._DET_OBJS_ALL = val
+
+    def add_det_obj(self, obj: str):
+        self._DET_OBJS.add(obj)
+        self._DET_OBJS_ALL.update({obj: 'valid'})
+
+    def del_det_obj(self, obj: str):
+        self._DET_OBJS.remove(obj)
+        self._DET_OBJS_ALL.update({obj: 'invalid'})
+
+    def is_detected(self, obj: str) -> bool:
+        if obj in self.DET_OBJS:
+            return True
+        else:
+            return False
 
     @property
     def SHOW_VIDEO(self) -> bool:

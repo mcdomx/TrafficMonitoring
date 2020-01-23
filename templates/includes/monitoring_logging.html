@@ -15,7 +15,7 @@
     <div id="collapseMonitor" class="collapse" aria-labelledby="headingMonitor" data-parent="#accordion">
       <div class="card-body">
         {% for k, v in mon_objs.items() %}
-          <a href="{{ url_for('toggle_monitem', log_object=k) }}">
+          <a class="monloglink" href="{{ url_for('toggle_monitem', log_object=k) }}">
 
               {% if v == "valid" %}
                 <div onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}">ON</span></div>
@@ -43,14 +43,15 @@
     <div id="collapseLog" class="collapse" aria-labelledby="headingLog" data-parent="#accordion">
       <div class="card-body">
         {% for k, v in det_objs.items() %}
-          <a href="{{ url_for('toggle_detitem', log_object=k) }}">
+          <a class="monloglink" href="{{ url_for('toggle_detitem', log_object=k) }}">
             <div class="form-check">
+
               {% if v == "valid" %}
-                <input type="checkbox" class="form-check-input" id="det_{{ k }}" onchange="checkbox_click(this)" checked>
+                <div onclick="toggle_ONOFF('#det_{{ k }}')"> {{k}} : <span id="det_{{ k }}">ON</span></div>
               {% else %}
-                <input type="checkbox" class="form-check-input" id="det_{{ k }}" onchange="checkbox_click(this)">
+                <div onclick="toggle_ONOFF('#det_{{ k }}')"> {{k}} : <span id="det_{{ k }}">OFF</span></div>
               {% endif %}
-              <label class="form-check-label" for="det_{{ k }}">{{ k }}</label>
+
             </div>
           </a>
         {% endfor %}

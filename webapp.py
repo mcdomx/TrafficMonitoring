@@ -116,12 +116,20 @@ def change_delay(direction: str):
 @app.route('/toggle_monitem/<log_object>')
 def toggle_monitem(log_object: str):
     logger.info("MONITOR LOGITEM UPDATE: {}".format(log_object))
+    if sm.config.is_monitored(log_object):
+        sm.config.del_mon_obj(log_object)
+    else:
+        sm.config.add_mon_obj(log_object)
     return '', 204
 
 
 @app.route('/toggle_detitem/<log_object>')
 def toggle_detitem(log_object: str):
     logger.info("DETECTION LOGITEM UPDATE: {}".format(log_object))
+    if sm.config.is_detected(log_object):
+        sm.config.del_det_obj(log_object)
+    else:
+        sm.config.add_det_obj(log_object)
     return '', 204
 
 

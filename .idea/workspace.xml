@@ -5,11 +5,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/services/config_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/config_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/logging_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/logging_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/services/video_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/video_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/includes/monitoring_logging.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/monitoring_logging.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/webapp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -126,6 +123,7 @@
       <workItem from="1578677372997" duration="29375000" />
       <workItem from="1579011018006" duration="49648000" />
       <workItem from="1579524383015" duration="39075000" />
+      <workItem from="1579803999535" duration="2314000" />
     </task>
     <servers />
   </component>
