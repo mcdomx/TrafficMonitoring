@@ -29,10 +29,20 @@ p {
   margin: 0px;
 }
 
-.monloglink:hover {
+.monloglink {
   color: black;
 }
 
 .monloglink:hover {
   color: orange;
 }
+
+.ON {
+    color: green;
+}
+
+.OFF {
+    color: red;
+}
+
+

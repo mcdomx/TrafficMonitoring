@@ -5,7 +5,7 @@
     <div class="card-header" id="headingMonitor">
       <h5 class="mb-0">
         <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseMonitor" aria-expanded="false" aria-controls="collapseMonitor">
-          <div>Monitoring: <span id="monitoring_status">ON</span></div>
+          <div class="monloglink">Monitoring: <span id="monitoring_status" class="ON">ON</span></div>
           <a href="{{ url_for('toggle_thread', thread='monitor') }}">
             <button type="button" id="btn_toggle_monitoring" class="btn btn-success">ON/OFF</button>
           </a>
@@ -15,14 +15,8 @@
     <div id="collapseMonitor" class="collapse" aria-labelledby="headingMonitor" data-parent="#accordion">
       <div class="card-body">
         {% for k, v in mon_objs.items() %}
-          <a class="monloglink" href="{{ url_for('toggle_monitem', log_object=k) }}">
-
-              {% if v == "valid" %}
-                <div onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}">ON</span></div>
-              {% else %}
-                <div onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}">OFF</span></div>
-              {% endif %}
-
+          <a href="{{ url_for('toggle_monitem', log_object=k) }}">
+            <div class="monloglink" onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}" class="{% if v == 'valid' %}ON{% else %}OFF{% endif %}">{% if v == "valid" %}ON{% else %}OFF{% endif %}</span></div>
           </a>
         {% endfor %}
       </div>
@@ -33,7 +27,7 @@
     <div class="card-header" id="headingLog">
       <h5 class="mb-0">
         <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseLog" aria-expanded="false" aria-controls="collapseLog">
-          <div>Logging: <span id="logging_status">ON</span></div>
+          <div class="monloglink">Logging: <span id="logging_status" class="ON">ON</span></div>
           <a href="{{ url_for('toggle_thread', thread='log') }}">
             <button type="button" id="btn_toggle_logging" class="btn btn-success">ON/OFF</button>
           </a>
@@ -43,15 +37,9 @@
     <div id="collapseLog" class="collapse" aria-labelledby="headingLog" data-parent="#accordion">
       <div class="card-body">
         {% for k, v in det_objs.items() %}
-          <a class="monloglink" href="{{ url_for('toggle_detitem', log_object=k) }}">
+          <a href="{{ url_for('toggle_detitem', log_object=k) }}">
             <div class="form-check">
-
-              {% if v == "valid" %}
-                <div onclick="toggle_ONOFF('#det_{{ k }}')"> {{k}} : <span id="det_{{ k }}">ON</span></div>
-              {% else %}
-                <div onclick="toggle_ONOFF('#det_{{ k }}')"> {{k}} : <span id="det_{{ k }}">OFF</span></div>
-              {% endif %}
-
+              <div class="monloglink" onclick="toggle_ONOFF('#det_{{ k }}')"> {{k}} : <span id="det_{{ k }}" class="{% if v == 'valid' %}ON{% else %}OFF{% endif %}">{% if v == "valid" %}ON{% else %}OFF{% endif %}</span></div>
             </div>
           </a>
         {% endfor %}

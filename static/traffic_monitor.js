@@ -34,11 +34,11 @@ function setup_buttons() {
 //  };
 
   document.querySelector("#btn_toggle_monitoring").onclick = () => {
-    toggle_ONOFF("#monitoring_status", "#btn_toggle_monitoring");
+    toggle_ONOFF("#monitoring_status");
   };
 
   document.querySelector("#btn_toggle_logging").onclick = () => {
-    toggle_ONOFF("#logging_status", "#btn_toggle_logging");
+    toggle_ONOFF("#logging_status");
   };
 
 } // end setup_buttons()
@@ -54,27 +54,25 @@ function toggle_stream() {
   }
 } // end toggle_stream()
 
-function toggle_ONOFF(btn_id) {
+function toggle_ONOFF(elem_id) {
 
-  let button = document.querySelector(btn_id);
+  let elem = document.querySelector(elem_id);
 
-  if (button.innerHTML==='ON') {
-    button.innerHTML = 'OFF';
+  if (elem.innerHTML==='ON') {
+    elem.innerHTML = 'OFF';
   } else {
-    button.innerHTML = 'ON';
+    elem.innerHTML = 'ON';
   }
+
+  elem.classList.toggle("ON")
+  elem.classList.toggle("OFF")
+
 }
 
 // END BUTTON TOGGLES #############################
 
 
-// CHECK BOXES #############################
-function checkbox_click(checkboxElem) {
-  let val = checkboxElem.id.split("_");
-  log_text("item checked: " + val[0] + " " + val[1] + " " + checkboxElem.checked)
-  socket.emit(val[0], val[1])
-}
-// END CHECK BOXES #############################
+
 
 
 // LOG LISTING ################################
