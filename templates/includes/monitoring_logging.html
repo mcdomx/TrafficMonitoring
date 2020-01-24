@@ -14,9 +14,9 @@
     </div>
     <div id="collapseMonitor" class="collapse" aria-labelledby="headingMonitor" data-parent="#accordion">
       <div class="card-body">
-        {% for k, v in mon_objs.items() %}
-          <a href="{{ url_for('toggle_monitem', log_object=k) }}">
-            <div class="monloglink" onclick="toggle_ONOFF('#mon_{{ k }}')"> {{k}} : <span id="mon_{{ k }}" class="{% if v == 'valid' %}ON{% else %}OFF{% endif %}">{% if v == "valid" %}ON{% else %}OFF{% endif %}</span></div>
+        {% for obj in trained_objs %}
+          <a href="{{ url_for('toggle_monitem', log_object=obj) }}">
+            <div class="monloglink" onclick="toggle_ONOFF('#mon_{{ obj }}')"> {{obj.replace('_',' ')}} : <span id="mon_{{ obj }}" class="{% if obj in mon_objs %}ON{% else %}OFF{% endif %}">{% if obj in mon_objs %}ON{% else %}OFF{% endif %}</span></div>
           </a>
         {% endfor %}
       </div>
@@ -36,10 +36,10 @@
     </div>
     <div id="collapseLog" class="collapse" aria-labelledby="headingLog" data-parent="#accordion">
       <div class="card-body">
-        {% for k, v in det_objs.items() %}
-          <a href="{{ url_for('toggle_detitem', log_object=k) }}">
+        {% for obj in trained_objs %}
+          <a href="{{ url_for('toggle_detitem', log_object=obj) }}">
             <div class="form-check">
-              <div class="monloglink" onclick="toggle_ONOFF('#det_{{ k }}')"> {{k}} : <span id="det_{{ k }}" class="{% if v == 'valid' %}ON{% else %}OFF{% endif %}">{% if v == "valid" %}ON{% else %}OFF{% endif %}</span></div>
+              <div class="monloglink" onclick="toggle_ONOFF('#det_{{ obj }}')"> {{obj.replace('_',' ')}} : <span id="det_{{ obj }}" class="{% if obj in det_objs %}ON{% else %}OFF{% endif %}">{% if obj in det_objs %}ON{% else %}OFF{% endif %}</span></div>
             </div>
           </a>
         {% endfor %}

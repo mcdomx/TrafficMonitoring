@@ -118,6 +118,11 @@ class DetectorImageai:
             print("Detected objects loaded!")
             return detect_objects
 
+        def get_trained_objects(self) -> set:
+            model_objects = self.detector.CustomObjects()
+            model_objects = {o.replace(' ', '_') for o in model_objects.keys()}
+            return model_objects
+
         def get_detector(self, det_type: str = 'image'):
             """
             Returns a ObjectDetection(default) or VideoObjectDetection
@@ -153,3 +158,5 @@ class DetectorImageai:
             print("'{}' model initialized!".format(self.MODEL_NAME))
 
             return detector
+
+

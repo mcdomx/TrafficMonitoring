@@ -41,7 +41,10 @@ def index():
     """
     if not sm.all_running:
         sm.start_all_services()
-    return render_template('index.html', mon_objs=sm.config.MON_OBJS_ALL, det_objs=sm.config.DET_OBJS_ALL)
+    return render_template('index.html',
+                           trained_objs=sm.get_trained_objects(),
+                           mon_objs=sm.config.MON_OBJS,
+                           det_objs=sm.config.DET_OBJS)
 
 
 def gen():

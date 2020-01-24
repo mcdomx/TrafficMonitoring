@@ -251,3 +251,6 @@ class ServiceManager(object):
 
     def get_queue_size(self):
         return self._video_service.get_queue_size()
+
+    def get_trained_objects(self) -> set:
+        return self._video_service.get_trained_objects()

@@ -31,3 +31,10 @@ class Detector(ABC):
         Returns frame number, frame and detections
         """
         ...
+
+    def get_trained_objects(self) -> set:
+        """
+        Each supported detector must override this method.
+        :return: set of strings where each string is the name of a trained object
+        """
+        ...

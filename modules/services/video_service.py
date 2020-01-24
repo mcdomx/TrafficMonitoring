@@ -7,12 +7,19 @@ import logging
 from collections import namedtuple
 
 from modules.detectors.detector_factory import DetectorFactory
+from modules.detectors.detector import Detector
 from modules.timers.elapsed_time import ElapsedTime
 from modules.services.service import Service
 
 logger = logging.getLogger('app')
 
 Frame = namedtuple("Frame", ['num', 'time', 'image', 'queue', 'detections'])
+
+
+def _get_detector(name, model) -> Detector:
+    d = DetectorFactory.get(name, model)
+    logger.info("RETURNING MODEL: {}".format(d))
+    return d
 
 
 def add_overlay(frame: np.array, stats: dict) -> np.array:
@@ -67,6 +74,7 @@ class VideoService(Service, threading.Thread):
         self._elapsed_time = None
         self._detector_name = detector_name
         self._detector_model = detector_model
+        self._detector = _get_detector(detector_name, detector_model)
         self._cam_stream = stream
         self._cam_fps = cam_rate
         self._display_fps = display_rate
@@ -80,6 +88,8 @@ class VideoService(Service, threading.Thread):
         self._undet_queue = queue.Queue(buffer_size)  # includes frame without detections
 
     # GETTERS AND SETTERS
+
+
     @property
     def det_name(self) -> str:
         return self._detector_name[0]
@@ -135,7 +145,11 @@ class VideoService(Service, threading.Thread):
     @base_delay.setter
     def base_delay(self, val: float):
         self._base_delay = val
+
     # END GETTERS AND SETTERS
+
+    def get_trained_objects(self) -> set:
+        return self._detector.get_trained_objects()
 
     def start(self):
         self._running = True
@@ -174,8 +188,9 @@ class VideoService(Service, threading.Thread):
         Thread stops when capture is closed.
         """
         # get detector
-        detector = DetectorFactory.get(self.det_name, self.det_model)
-        logger.info("Loaded detector->  {}".format(detector))
+        # detector = DetectorFactory.get(self.det_name, self.det_model)
+        # logger.info("Loaded detector->  {}".format(detector))
+        detector = self._detector
 
         # initialize loop variables
         frame_num = 0

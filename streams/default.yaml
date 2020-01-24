@@ -1,0 +1,17 @@
+CAM_STREAM: 1EiC9bvVGnk
+LOGGING: true
+LOG_FILEPATH: ./logs/files/camlogs.txt
+DETECTION: true
+DETECTOR_NAME: imageai
+DETECTOR_MODEL: yolo
+DPM: 20
+DISPLAY_FPS: 30
+MONITORING: true
+MON_DIR: ./logs/images
+MON_OBJS:
+  - person
+DET_OBJS:
+  - person
+  - car
+  - bus
+BASE_DELAY: 0.045
