@@ -1,0 +1,49 @@
+<!-- MONITORING_LOGGING -->
+<div id="accordion">
+
+  <div class="card">
+    <div class="card-header" id="headingMonitor">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseMonitor" aria-expanded="false" aria-controls="collapseMonitor">
+          <div class="collapsable">Monitoring: <span id="monitoring_status" class="ON">ON</span></div>
+          <a href="{{ url_for('toggle_thread', thread='monitor') }}">
+            <button type="button" id="btn_toggle_monitoring" class="btn btn-success">ON/OFF</button>
+          </a>
+        </button>
+      </h5>
+    </div>
+    <div id="collapseMonitor" class="collapse" aria-labelledby="headingMonitor" data-parent="#accordion">
+      <div class="card-body">
+        {% for obj in trained_objs %}
+          <a href="{{ url_for('toggle_monitem', log_object=obj) }}">
+            <div class="collapsable" onclick="toggle_ONOFF('#mon_{{ obj }}')"> {{obj.replace('_',' ')}} : <span id="mon_{{ obj }}" class="{% if obj in mon_objs %}ON{% else %}OFF{% endif %}">{% if obj in mon_objs %}ON{% else %}OFF{% endif %}</span></div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" id="headingLog">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseLog" aria-expanded="false" aria-controls="collapseLog">
+          <div class="collapsable">Logging: <span id="logging_status" class="ON">ON</span></div>
+          <a href="{{ url_for('toggle_thread', thread='log') }}">
+            <button type="button" id="btn_toggle_logging" class="btn btn-success">ON/OFF</button>
+          </a>
+        </button>
+      </h5>
+    </div>
+    <div id="collapseLog" class="collapse" aria-labelledby="headingLog" data-parent="#accordion">
+      <div class="card-body">
+        {% for obj in trained_objs %}
+          <a href="{{ url_for('toggle_detitem', log_object=obj) }}">
+              <div class="collapsable" onclick="toggle_ONOFF('#det_{{ obj }}')"> {{obj.replace('_',' ')}} : <span id="det_{{ obj }}" class="{% if obj in det_objs %}ON{% else %}OFF{% endif %}">{% if obj in det_objs %}ON{% else %}OFF{% endif %}</span></div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- END MONITORING_LOGGING -->

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="JavaScript File" />
+        <option value="CSS File" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="4c4708c5-a80d-419d-b92b-630b075f43e0" />
+  <component name="ProjectId" id="1VvyBYhR1xtLfFsESGs61Y28YK1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/modules/services" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
+    <property name="settings.editor.splitter.proportion" value="0.29980275" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="TrafficMonitoring" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="TrafficMonitoring" />
+      </console-settings>
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules/services" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/logs/logfiles" />
+      <recent name="$PROJECT_DIR$/notebooks" />
+      <recent name="$PROJECT_DIR$/settings" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules/services" />
+      <recent name="$PROJECT_DIR$/modules/threads" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="traffic_detection" type="PythonConfigurationType" factoryName="Python">
+      <module name="TrafficMonitoring" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="webapp" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="true" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="" />
+      <created>1578147728445</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1578147728445</updated>
+      <workItem from="1578154541643" duration="127000" />
+      <workItem from="1578154674976" duration="111074000" />
+      <workItem from="1578677372997" duration="29375000" />
+      <workItem from="1579011018006" duration="49648000" />
+      <workItem from="1579524383015" duration="39075000" />
+      <workItem from="1579803999535" duration="2314000" />
+      <workItem from="1579882356100" duration="1279000" />
+      <workItem from="1579889114540" duration="4281000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="267" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1579106831638">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="267" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1680.1027@0.23.1680.1027" timestamp="1579106831638" />
+    <state x="1557" y="464" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1578520148217">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="1557" y="464" key="#com.intellij.fileTypes.FileTypeChooser/0.23.2560.1417@0.23.2560.1417" timestamp="1578520148217" />
+    <state x="944" y="482" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1578782725364">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="944" y="482" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.2560.1417@0.23.2560.1417" timestamp="1578782725364" />
+    <state x="463" y="205" key="SettingsEditor" timestamp="1580132203378">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="304" y="155" key="SettingsEditor/0.23.1680.1027@0.23.1680.1027" timestamp="1579271716350" />
+    <state x="463" y="205" key="SettingsEditor/0.23.2560.1417@0.23.2560.1417" timestamp="1580132203378" />
+    <state x="428" y="23" width="586" height="1193" key="dock-window-1" timestamp="1580135996336">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="428" y="23" width="586" height="1193" key="dock-window-1/0.23.2560.1417@0.23.2560.1417" timestamp="1580135996336" />
+    <state x="947" y="265" width="683" height="729" key="find.popup" timestamp="1580134363796">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="947" y="265" width="683" height="729" key="find.popup/0.23.2560.1417@0.23.2560.1417" timestamp="1580134363796" />
+    <state x="468" y="240" width="670" height="676" key="search.everywhere.popup" timestamp="1579179794349">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="468" y="240" width="670" height="676" key="search.everywhere.popup/0.23.1680.1027@0.23.1680.1027" timestamp="1579179794349" />
+  </component>
+</project>

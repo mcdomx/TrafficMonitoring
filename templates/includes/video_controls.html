@@ -1,0 +1,32 @@
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="headingMonitor">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed collapsable" data-toggle="collapse" data-target="#collapseVideoControls" aria-expanded="false" aria-controls="collapseVideoControls">
+          Video Controls
+        </button>
+      </h5>
+    </div>
+    <div id="collapseVideoControls" class="collapse" aria-labelledby="headingVideoControls" data-parent="#accordion">
+      <div class="card-body">
+
+<!--          <a href="{{ url_for('toggle_stream') }}">-->
+<!--            <button type="button" id="btn_toggle_stream" class="btn btn-success">Stop</button>-->
+<!--          </a>-->
+
+          <span>Base Delay: </span>
+
+          <a href="{{ url_for('change_delay', direction='decrease') }}">
+            <button type="button" id="btn_decrease" class="btn btn-success"> - </button>
+          </a>
+
+          <a href="{{ url_for('change_delay', direction='increase') }}">
+            <button type="button" id="btn_increase" class="btn btn-success"> + </button>
+          </a>
+
+          <span id="base_delay">{{base_delay}}</span>
+
+      </div>
+    </div>
+  </div>
+</div>

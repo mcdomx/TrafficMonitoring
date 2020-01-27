@@ -1,0 +1,37 @@
+{% extends "base_layout.html" %}
+
+  {% block content %}
+
+  <!-- Video and Detection Log ROW   -->
+  <div class="row" style="height:3vh"></div>
+  <div class="row mt-5 px-1" style="height:400px;">
+
+    <!-- TOP LEFT BLOCK -->
+    <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+      {% include "includes/video_window.html" %}
+    </div>
+    <!-- END TOP RIGHT BLOCK -->
+
+    <!-- TOP RIGHT BLOCK -->
+    <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+      {% include "includes/detection_log.html" %}
+    </div>
+    <!-- END TOP RIGHT BLOCK -->
+
+  </div> <!-- Video and Detection Log ROW -->
+
+
+
+  <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+    {% include "includes/monitoring_logging.html" %}
+  </div>
+
+  <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+      {% include "includes/video_controls.html" %}
+  </div>
+
+  <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+    {% include "includes/application_log.html" %}
+  </div>
+
+  {% endblock %}
