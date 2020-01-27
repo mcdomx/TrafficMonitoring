@@ -1,4 +1,4 @@
-# Traffic Detection (v3.0) - UNDER DEVELOPMENT
+# Traffic Detection (v3.0)
 
 Traffic Detection is designed to capture a stream of video, perform object detection, and display the video stream with detections as well as capture statistics of items detected.  Additionally, Traffic Detection will save detection statistics to a CSV file and supports saving captured frames where selected objects have been detected.
 
