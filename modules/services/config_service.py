@@ -8,47 +8,14 @@ are in this module.  Other modules may change
 variable values through accessors only.
 """
 import os
-import json
 import logging
+import yaml
 
 import pafy
 import cv2
 import numpy as np
 
 logger = logging.getLogger('app')
-
-
-# Access Data in Files
-def __read_object_file(file_name) -> dict:
-    """
-    Returns all items in an object file and their validity.
-    Valid objects are being monitored.
-    File is a json dict: {<object>:"valid"|"invalid"}
-    """
-    with open(file_name, 'r') as fp:
-        all_objects = json.load(fp)
-    return all_objects
-
-
-def get_monitored_objects(file_name=os.path.join('.', 'settings', 'monitor_objects.json')) -> set:
-    all_objects = __read_object_file(file_name)
-    return {k.strip() for k, v in all_objects.items() if v == 'valid'}
-
-
-def get_monitored_objects_all(file_name=os.path.join('.', 'settings', 'monitor_objects.json')) -> dict:
-    return __read_object_file(file_name)
-
-
-def get_detected_objects(file_name=os.path.join('.', 'settings', 'detect_objects.json')) -> set:
-    all_objects = __read_object_file(file_name)
-    return {k.strip() for k, v in all_objects.items() if v == 'valid'}
-
-
-def get_detected_objects_all(file_name=os.path.join('.', 'settings', 'detect_objects.json')) -> dict:
-    return __read_object_file(file_name)
-
-
-# END FILE ACCESS FUNCTIONS
 
 
 # CAMERA FUNCTIONS
@@ -127,50 +94,84 @@ def get_camfps(cam: str) -> float:
 # END CAMERA FUNCTIONS ##########################
 
 
-class Config(object):
+# YAML CONFIGURATION
+class ConfigYAML(yaml.YAMLObject):
     """
-    Holds video streaming and detection parameters.
-    Defaults are from environment variables and some are from files.
-    Where environment variables are not set, default values are provided.
+
+    config_file = os.path.join('.', 'config', 'default.yaml')
+    with open(config_file) as fp:
+        yaml_data = yaml.load(fp, Loader=yaml.BaseLoader)
+
+    data_dict = ConfigYAML(**yaml_data)
+
     """
-    def __init__(self):
-        self._CAM_STREAM: str = get_cam_name(os.getenv("CAM_STREAM", 0))
-        self._CAM_FPS: float = get_camfps(self.CAM_STREAM)
-        self._LOGGING: bool = True if os.getenv("LOGGING", "True") == "True" else False
-        self._LOG_FILEPATH: str = os.getenv("LOG_FILEPATH", os.path.join('.', 'logs', 'files', 'camlogs.txt'))
-        self._DETECTION: bool = True if os.getenv("DETECTION", 'True') == "True" else False
-        self._DETECTOR_NAME: str = os.getenv("DETECTOR_NAME", "imageai")
-        self._DETECTOR_MODEL: str = os.getenv("DETECTOR_MODEL", "yolo")
-        self._DPM: float = int(os.getenv("DPM", 20))
-        self._DISPLAY_FPS: float = int(os.getenv("DISPLAY_FPS", 30))
-        self._MONITORING: bool = True if os.getenv("MONITORING", "True") == "True" else False
-        self._MON_DIR: str = os.getenv("MON_DIR", os.path.join('.', 'logs', 'images'))
-        self._MON_OBJS: set = get_monitored_objects()
-        self._MON_OBJS_ALL: dict = get_monitored_objects_all()
-        self._DET_OBJS: set = get_detected_objects()
-        self._DET_OBJS_ALL: dict = get_detected_objects_all()
-        self._SHOW_VIDEO: bool = True if os.getenv("SHOW_VIDEO", "True") == "True" else False
-        self._BASE_DELAY: float = 0.000
+    yaml_tag = u"!StreamYAML"
 
-        logger.info("Parameter Service Established")
+    def __init__(self, **kwargs):
+        if 'CAM_STREAM' in kwargs:
+            self._CAM_STREAM = get_cam_name(kwargs['CAM_STREAM'])
+        else:
+            self._CAM_STREAM = get_cam_name('1EiC9bvVGnk')
+        self._CAM_FPS: float = get_camfps(self._CAM_STREAM)
 
-    def __str__(self):
-        rv = "TRAFFIC DETECTION PARAMETERS:\n"
-        rv += "\n\tCAM_STREAM    : {}".format(self.CAM_STREAM)
-        rv += "\n\tCAM_FPS       : {}".format(self.CAM_FPS)
-        rv += "\n\tLOGGING       : {}".format(self.LOGGING)
-        rv += "\n\tLOG_FILEPATH  : {}".format(self.LOG_FILEPATH)
-        rv += "\n\tDETECTION     : {}".format(self.DETECTION)
-        rv += "\n\tDETECTOR      : {}".format(self.DETECTOR_NAME)
-        rv += "\n\tMODEL         : {}".format(self.DETECTOR_MODEL)
-        rv += "\n\tDPM           : {}".format(self.DPM)
-        rv += "\n\tDISPLAY_FPS   : {}".format(self.DISPLAY_FPS)
-        rv += "\n\tMONITORING    : {}".format(self.MONITORING)
-        rv += "\n\tMONITORED OBJS: {}".format(self.MON_OBJS)
-        rv += "\n\tSHOW_VIDEO    : {}".format(self.SHOW_VIDEO)
-        rv += "\n\tBASE_DELAY    : {}".format(self.BASE_DELAY)
+        if 'LOGGING' in kwargs and kwargs['LOGGING'] == 'true':
+            self._LOGGING = True
+        else:
+            self._LOGGING = False
+        if 'LOG_FILEPATH' in kwargs:
+            self._LOG_FILEPATH = kwargs['LOG_FILEPATH']
+        else:
+            self._LOG_FILEPATH = os.path.join('.', 'logs', 'files', 'camlogs.txt')
+        if 'DETECTION' in kwargs and kwargs['DETECTION'] == 'true':
+            self._DETECTION = True
+        else:
+            self._DETECTION = False
+        if 'DETECTOR_NAME' in kwargs:
+            self._DETECTOR_NAME = kwargs['DETECTOR_NAME']
+        else:
+            self._DETECTOR_NAME = 'imageai'
 
-        return rv
+        if 'DETECTOR_MODEL' in kwargs:
+            self._DETECTOR_MODEL = kwargs['DETECTOR_MODEL']
+        else:
+            self._DETECTOR_MODEL = 'yolo'
+
+        if 'DPM' in kwargs:
+            self._DPM = float(kwargs['DPM'])
+        else:
+            self._DPM = 20.0
+
+        if 'DISPLAY_FPS' in kwargs:
+            self._DISPLAY_FPS = float(kwargs['DISPLAY_FPS'])
+        else:
+            self._DISPLAY_FPS = 30.0
+
+        if 'MONITORING' in kwargs and kwargs['MONITORING'] == 'true':
+            self._MONITORING = True
+        else:
+            self._MONITORING = False
+
+        if 'MON_DIR' in kwargs:
+            self._MON_DIR = kwargs['MON_DIR']
+        else:
+            self._MON_DIR = os.path.join('.', 'logs', 'images')
+
+        if 'MON_OBJS' in kwargs:
+            self._MON_OBJS = set(kwargs['MON_OBJS'])
+        else:
+            self._MON_OBJS = set()
+
+        if 'DET_OBJS' in kwargs:
+            self._DET_OBJS = set(kwargs['DET_OBJS'])
+        else:
+            self._DET_OBJS = set()
+
+        if 'BASE_DELAY' in kwargs:
+            self._BASE_DELAY = float(kwargs['BASE_DELAY'])
+        else:
+            self._BASE_DELAY = 0.045
+
+        logger.info(self)
 
     # PARAMETER GETTERS AND SETTERS ##################################
     @property
@@ -284,25 +285,15 @@ class Config(object):
 
     def add_mon_obj(self, obj: str):
         self._MON_OBJS.add(obj)
-        self._MON_OBJS_ALL.update({obj: 'valid'})
 
     def del_mon_obj(self, obj: str):
         self._MON_OBJS.remove(obj)
-        self._MON_OBJS_ALL.update({obj: 'invalid'})
 
     def is_monitored(self, obj: str) -> bool:
         if obj in self.MON_OBJS:
             return True
         else:
             return False
-
-    @property
-    def MON_OBJS_ALL(self) -> dict:
-        return self._MON_OBJS_ALL
-
-    @MON_OBJS_ALL.setter
-    def MON_OBJS_ALL(self, val: dict) -> None:
-        self._MON_OBJS_ALL = val
 
     @property
     def DET_OBJS(self) -> set:
@@ -312,21 +303,11 @@ class Config(object):
     def DET_OBJS(self, val: set) -> None:
         self._DET_OBJS = val
 
-    @property
-    def DET_OBJS_ALL(self) -> dict:
-        return self._DET_OBJS_ALL
-
-    @DET_OBJS_ALL.setter
-    def DET_OBJS_ALL(self, val: dict) -> None:
-        self._DET_OBJS_ALL = val
-
     def add_det_obj(self, obj: str):
         self._DET_OBJS.add(obj)
-        self._DET_OBJS_ALL.update({obj: 'valid'})
 
     def del_det_obj(self, obj: str):
         self._DET_OBJS.remove(obj)
-        self._DET_OBJS_ALL.update({obj: 'invalid'})
 
     def is_detected(self, obj: str) -> bool:
         if obj in self.DET_OBJS:
@@ -335,19 +316,38 @@ class Config(object):
             return False
 
     @property
-    def SHOW_VIDEO(self) -> bool:
-        return self._SHOW_VIDEO
-
-    @SHOW_VIDEO.setter
-    def SHOW_VIDEO(self, val: bool):
-        self._SHOW_VIDEO = val
-
-    @property
     def BASE_DELAY(self) -> float:
         return self._BASE_DELAY
 
     @BASE_DELAY.setter
     def BASE_DELAY(self, val: float):
         self._BASE_DELAY = max(0.0, val)
-
     # END GETTERS AND SETTERS ##################################
+
+    def __repr__(self):
+        return "%s(\n\tCAM_STREAM=%r, " \
+               "\n\tLOGGING=%r, " \
+               "\n\tLOG_FILEPATH=%r, " \
+               "\n\tDETECTION=%r, " \
+               "\n\tDETECTOR_NAME=%r, " \
+               "\n\tDETECTOR_MODEL=%r, " \
+               "\n\tDPM=%r, " \
+               "\n\tDISPLAY_FPS=%r, " \
+               "\n\tMONITORING=%r, " \
+               "\n\tMON_DIR=%r, " \
+               "\n\tMON_OBJS=%r, " \
+               "\n\tDET_OBJS=%r, " \
+               "\n\tBASE_DELAY=%r)" % (self.__class__.__name__,
+                                       self.CAM_STREAM,
+                                       self.LOGGING,
+                                       self.LOG_FILEPATH,
+                                       self.DETECTION,
+                                       self.DETECTOR_NAME,
+                                       self.DETECTOR_MODEL,
+                                       self.DPM,
+                                       self.DISPLAY_FPS,
+                                       self.MONITORING,
+                                       self.MON_DIR,
+                                       self.MON_OBJS,
+                                       self.DET_OBJS,
+                                       self.BASE_DELAY)

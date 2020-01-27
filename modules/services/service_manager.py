@@ -1,5 +1,7 @@
 import logging
 import numpy as np
+import os
+import yaml
 from multiprocessing import Process
 
 from flask_socketio import SocketIO
@@ -8,7 +10,7 @@ from modules.services.monitoring_service import MonitorService
 from modules.services.logging_service import LoggingService
 from modules.services.video_service import VideoService
 from modules.services.service import Service
-from modules.services.config_service import Config
+from modules.services.config_service import ConfigYAML
 
 logger = logging.getLogger('app')
 
@@ -18,10 +20,14 @@ class ServiceManager(object):
     Handles starting and stopping all required services.
     Acts as interface to underlying services.
     """
-    def __init__(self, socketio: SocketIO):
+    def __init__(self, socketio: SocketIO, config_file: os.path = None):
+
+        with open(config_file) as fp:
+            yaml_data = yaml.load(fp, Loader=yaml.BaseLoader)
+
         self.all_running = False
         self.socketio = socketio
-        self.config = Config()
+        self._config = ConfigYAML(**yaml_data)
         self._monitor_service: MonitorService = self.get_monitor_service()
         self._logging_service: LoggingService = self.get_logging_service()
         self._video_service: VideoService = self.get_video_service()
@@ -52,11 +58,11 @@ class ServiceManager(object):
         if not name:
             name = "monitor-service"
         if not detection_rate:
-            detection_rate = self.config.DPM
+            detection_rate = self._config.DPM
         if not objects:
-            objects = self.config.MON_OBJS
+            objects = self._config.MON_OBJS
         if not dir_path:
-            dir_path = self.config.MON_DIR
+            dir_path = self._config.MON_DIR
         # print("SERVICE: Adding '{}'".format(name))
         return MonitorService(name=name,
                               detection_rate=detection_rate,
@@ -71,9 +77,9 @@ class ServiceManager(object):
         if not name:
             name = "logging-service"
         if not detection_rate:
-            detection_rate = self.config.DPM
+            detection_rate = self._config.DPM
         if not file_path:
-            file_path = self.config.LOG_FILEPATH
+            file_path = self._config.LOG_FILEPATH
         if not socketio:
             socketio = self.socketio
 
@@ -89,23 +95,26 @@ class ServiceManager(object):
                           cam_rate=None,
                           stream=None,
                           display_rate=None,
-                          detection_rate=None):
+                          detection_rate=None,
+                          detected_objects=None):
         if not name:
             name = "video-service"
         if not detector_name:
-            detector_name = self.config.DETECTOR_NAME,
+            detector_name = self._config.DETECTOR_NAME,
         if not detector_model:
-            detector_model = self.config.DETECTOR_MODEL,
+            detector_model = self._config.DETECTOR_MODEL,
         if not base_delay:
-            base_delay = self.config.BASE_DELAY,
+            base_delay = self._config.BASE_DELAY,
         if not cam_rate:
-            cam_rate = self.config.CAM_FPS,
+            cam_rate = self._config.CAM_FPS,
         if not stream:
-            stream = self.config.CAM_STREAM,
+            stream = self._config.CAM_STREAM,
         if not display_rate:
-            display_rate = self.config.DISPLAY_FPS,
+            display_rate = self._config.DISPLAY_FPS,
         if not detection_rate:
-            detection_rate = self.config.DPM
+            detection_rate = self._config.DPM
+        if not detected_objects:
+            detected_objects = self.get_detected_objects()
         # print("SERVICE: Adding '{}'".format(name))
         return VideoService(name=name,
                             detector_name=detector_name,
@@ -114,7 +123,8 @@ class ServiceManager(object):
                             cam_rate=cam_rate,
                             stream=stream,
                             display_rate=display_rate,
-                            detection_rate=detection_rate)
+                            detection_rate=detection_rate,
+                            detected_objects=detected_objects)
 
     def add_service(self, s: str) -> Service:
 
@@ -254,3 +264,38 @@ class ServiceManager(object):
 
     def get_trained_objects(self) -> set:
         return self._video_service.get_trained_objects()
+
+    def add_mon_obj(self, obj: str):
+        self._config.add_mon_obj(obj)
+
+    def del_mon_obj(self, obj: str):
+        self._config.del_mon_obj(obj)
+
+    def is_monitored(self, obj: str) -> bool:
+        return self._config.is_monitored(obj)
+
+    def get_monitored_objects(self) -> set:
+        return self._config.MON_OBJS
+
+    def add_det_obj(self, obj: str):
+        self._config.add_det_obj(obj)
+        self._video_service.det_objs = self._config.DET_OBJS
+
+    def del_det_obj(self, obj: str):
+        self._config.del_det_obj(obj)
+        self._video_service.det_objs = self._config.DET_OBJS
+
+    def is_detected(self, obj: str) -> bool:
+        return self._config.is_detected(obj)
+
+    def get_detected_objects(self) -> set:
+        return self._config.DET_OBJS
+
+    @property
+    def base_delay(self) -> float:
+        return self._config.BASE_DELAY
+
+    @base_delay.setter
+    def base_delay(self, val: float):
+        self._config.BASE_DELAY = val
+

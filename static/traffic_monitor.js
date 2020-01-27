@@ -1,37 +1,30 @@
 
-const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-
 // ########################  begin DOMContentLoaded ########################
 document.addEventListener('DOMContentLoaded', () => {
 
-
   socket.on('connect', () => {
-    log_text(location.protocol + '//' + document.domain + ':' + location.port);
-    log_text("Socket connected on client!")
+    let address = location.protocol + '//' + document.domain + ':' + location.port;
+    log_text(address);
+    log_text("Socket connected on client!");
+    socket.emit('startup', address);
   }); // end on connect
 
   setup_buttons();
   setup_log_listing(socket);
   setup_vid_stats(socket);
-  setup_app_log(socket)
+  setup_app_log(socket);
+  setup_base_delay(socket);
 
 });
 // ########################  end DOMContentLoaded ########################
 
+const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
 // sets up stop/start button to respond to click
 function setup_buttons() {
   document.querySelector('#btn_toggle_stream').onclick = () => {
     toggle_stream();
   };
-
-//  document.querySelector("#btn_increase").onclick = () => {
-//    increase(socket);
-//  };
-//
-//  document.querySelector("#btn_decrease").onclick = () => {
-//    decrease(socket);
-//  };
 
   document.querySelector("#btn_toggle_monitoring").onclick = () => {
     toggle_ONOFF("#monitoring_status");
@@ -183,13 +176,6 @@ function setup_vid_stats(socket){
   });
 }
 
-//function increase(socket) {
-//  socket.emit('increase');
-//}
-//
-//function decrease(socket) {
-//  socket.emit('decrease');
-//}
 
 function update_vid_stats(vid_stats){
   let json_data = JSON.parse(vid_stats);
@@ -207,3 +193,18 @@ function update_vid_stats(vid_stats){
 }
 
 // END VIDEO STATISTICS SIZE ################################
+
+
+// INFO TEXTS ################################
+function setup_base_delay(socket) {
+  socket.on('base_delay_update', val => {
+    update_base_delay(val);
+  });
+}
+
+function update_base_delay(val) {
+  let bdelem = document.querySelector('#base_delay');
+  bdelem.innerHTML = val;
+}
+
+// END INFO TEXTS ################################

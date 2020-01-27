@@ -1,0 +1,13 @@
+version: '3'
+services:
+  tf_detection:
+    build: .
+    ports:
+    - "5000:5000"
+    volumes:
+    - ./logs:/app/logs
+    environment:
+      CONFIG_FILE: ./config/default.yaml
+      FLASK_APP: webapp.py
+      FLASK_ENV: development
+      FLASK_DEBUG: 1

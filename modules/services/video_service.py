@@ -67,7 +67,8 @@ class VideoService(Service, threading.Thread):
                  display_rate: float,
                  detection_rate: float,
                  base_delay: float,
-                 buffer_size: int = 256):
+                 buffer_size: int = 256,
+                 detected_objects: set = None):
         Service.__init__(self, name)
         threading.Thread.__init__(self)
         self.setName(name)
@@ -80,6 +81,7 @@ class VideoService(Service, threading.Thread):
         self._display_fps = display_rate
         self._dpm = detection_rate
         self._base_delay = base_delay
+        self._det_objs = detected_objects
 
         # queues
         self.buffer_size = buffer_size
@@ -88,7 +90,6 @@ class VideoService(Service, threading.Thread):
         self._undet_queue = queue.Queue(buffer_size)  # includes frame without detections
 
     # GETTERS AND SETTERS
-
 
     @property
     def det_name(self) -> str:
@@ -145,6 +146,21 @@ class VideoService(Service, threading.Thread):
     @base_delay.setter
     def base_delay(self, val: float):
         self._base_delay = val
+
+    @property
+    def det_objs(self) -> set:
+        return self._det_objs
+
+    @det_objs.setter
+    def det_objs(self, objs: set):
+        self._det_objs = objs
+
+    def add_det_obj(self, obj: str):
+        self._det_objs.add(obj)
+
+    def del_det_obj(self, obj: str):
+        self._det_objs.remove(obj)
+
 
     # END GETTERS AND SETTERS
 
@@ -238,7 +254,7 @@ class VideoService(Service, threading.Thread):
 
                 try:
                     # run detection on frame
-                    frame, detections = detector.detect(frame=cur_frame.copy())
+                    frame, detections = detector.detect(frame=cur_frame.copy(), det_objs=self.det_objs)
                     q = self._det_queue
 
                 except Exception as e:

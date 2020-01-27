@@ -1,6 +1,6 @@
 /* Coolors Exported Palette - coolors.co/3d348b-7678ed-f7b801-f18701-f35b04 */
 /* HSL */
-header, footer {
+header, footer, nav {
   padding: 15px 15px 50px 15px;
   color: lightgrey;
   background-color: #368ef2;
@@ -29,11 +29,11 @@ p {
   margin: 0px;
 }
 
-.monloglink {
+.collapsable {
   color: black;
 }
 
-.monloglink:hover {
+.collapsable:hover {
   color: orange;
 }
 
@@ -43,6 +43,10 @@ p {
 
 .OFF {
     color: red;
+}
+
+#log_container, #app_log {
+  background-color: lightgray;
 }
 
 

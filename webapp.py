@@ -27,11 +27,9 @@ if not os.getenv("FLASK_APP"):
 
 socketio = SocketIO(app)
 
-# setup a thread manager
-sm = ServiceManager(socketio)
-
-# TEMP - FOR DEVELOPMENT
-sm.config.BASE_DELAY = .045
+# setup a service manager
+config_file = os.getenv("CONFIG_FILE")
+sm = ServiceManager(socketio, config_file)
 
 
 @app.route('/')
@@ -43,8 +41,9 @@ def index():
         sm.start_all_services()
     return render_template('index.html',
                            trained_objs=sm.get_trained_objects(),
-                           mon_objs=sm.config.MON_OBJS,
-                           det_objs=sm.config.DET_OBJS)
+                           mon_objs=sm.get_monitored_objects(),
+                           det_objs=sm.get_detected_objects(),
+                           base_delay=sm.base_delay)
 
 
 def gen():
@@ -56,7 +55,7 @@ def gen():
     while sm.all_running:
 
         # micro-nap until the display rate is reached
-        sleep_time = sm.config.BASE_DELAY
+        sleep_time = sm.base_delay
         print("SLEEPING {:04} {}              ".format(sleep_time, sm.get_queue_size()), end='\r')
         time.sleep(sleep_time)
         # print("DONE SLEEPING               ", end='\r')
@@ -106,39 +105,45 @@ def toggle_thread(thread: str):
 def change_delay(direction: str):
 
     if direction == 'increase':
-        sm.config.BASE_DELAY += .002
-        logger.info(f"new delay: {sm.config.BASE_DELAY}")
+        sm.base_delay += .002
+        logger.info(f"new delay: {sm.base_delay}")
 
     if direction == 'decrease':
-        sm.config.BASE_DELAY = max(0, sm.config.BASE_DELAY - .002)
-        logger.info(f"new delay: {sm.config.BASE_DELAY}")
+        sm.base_delay = max(0.0, sm.base_delay - .002)
+        logger.info(f"new delay: {sm.base_delay}")
 
+    socketio.emit('base_delay_update', sm.base_delay)
     return '', 204
 
 
 @app.route('/toggle_monitem/<log_object>')
 def toggle_monitem(log_object: str):
     logger.info("MONITOR LOGITEM UPDATE: {}".format(log_object))
-    if sm.config.is_monitored(log_object):
-        sm.config.del_mon_obj(log_object)
+    if sm.is_monitored(log_object):
+        sm.del_mon_obj(log_object)
     else:
-        sm.config.add_mon_obj(log_object)
+        sm.add_mon_obj(log_object)
     return '', 204
 
 
 @app.route('/toggle_detitem/<log_object>')
 def toggle_detitem(log_object: str):
     logger.info("DETECTION LOGITEM UPDATE: {}".format(log_object))
-    if sm.config.is_detected(log_object):
-        sm.config.del_det_obj(log_object)
+    if sm.is_detected(log_object):
+        sm.del_det_obj(log_object)
     else:
-        sm.config.add_det_obj(log_object)
+        sm.add_det_obj(log_object)
     return '', 204
 
 
 @socketio.on('connect')
 def handle_startup():
     logger.info("Socket connection is established on server!")
+
+
+@socketio.on('startup')
+def handle_message(info):
+    logger.info("Web page available at: " + info)
 
 
 if __name__ == '__main__':

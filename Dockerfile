@@ -25,7 +25,7 @@ RUN pip3 install https://github.com/OlafenwaMoses/ImageAI/releases/download/2.0.
 
 # Copy python code and custom objects file
 COPY ./modules ./modules
-COPY ./settings ./settings
+COPY ./config ./config
 COPY ./templates ./templates
 COPY ./static ./static
 COPY ./.flaskenv ./
@@ -35,9 +35,9 @@ COPY ./webapp.py ./
 CMD mkdir /app/logs/files
 CMD mkdir /app/logs/images
 
-ENV FLASK_APP=webapp.py
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=1
+#ENV FLASK_APP=webapp.py
+#ENV FLASK_ENV=development
+#ENV FLASK_DEBUG=1
 
 ENTRYPOINT ["python", "webapp.py"]
 

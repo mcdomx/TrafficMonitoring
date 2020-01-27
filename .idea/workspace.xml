@@ -2,16 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/streams/default.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/application_log.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/includes/video_controls.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/detectors/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/detectors/detector_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector_factory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/detectors/detector_imageai.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector_imageai.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/services/config_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/config_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/services/service_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/service_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/modules/services/video_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/services/video_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings/detect_objects.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings/monitor_objects.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streams/default.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/default.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/includes/applog.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/includes/detection_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/detection_log.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/includes/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/footer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/includes/menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/menu.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/includes/monitoring_logging.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/monitoring_logging.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/includes/video_window.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/video_window.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/version_log.md" beforeDir="false" afterPath="$PROJECT_DIR$/version_log.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp.py" beforeDir="false" afterPath="$PROJECT_DIR$/webapp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +68,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
     <property name="settings.editor.splitter.proportion" value="0.29980275" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -64,17 +80,17 @@
     </option>
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/modules/services" />
-      <recent name="$PROJECT_DIR$/modules/threads" />
-      <recent name="$PROJECT_DIR$" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/modules/services" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/logs/logfiles" />
       <recent name="$PROJECT_DIR$/notebooks" />
       <recent name="$PROJECT_DIR$/settings" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/modules/services" />
+      <recent name="$PROJECT_DIR$/modules/threads" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager">
@@ -163,10 +179,19 @@
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state x="944" y="482" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.2560.1417@0.23.2560.1417" timestamp="1578782725364" />
-    <state x="304" y="155" key="SettingsEditor" timestamp="1579271716350">
-      <screen x="0" y="23" width="1680" height="1027" />
+    <state x="463" y="205" key="SettingsEditor" timestamp="1580132203378">
+      <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state x="304" y="155" key="SettingsEditor/0.23.1680.1027@0.23.1680.1027" timestamp="1579271716350" />
+    <state x="463" y="205" key="SettingsEditor/0.23.2560.1417@0.23.2560.1417" timestamp="1580132203378" />
+    <state x="428" y="23" width="586" height="1193" key="dock-window-1" timestamp="1580135996336">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="428" y="23" width="586" height="1193" key="dock-window-1/0.23.2560.1417@0.23.2560.1417" timestamp="1580135996336" />
+    <state x="947" y="265" width="683" height="729" key="find.popup" timestamp="1580134363796">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="947" y="265" width="683" height="729" key="find.popup/0.23.2560.1417@0.23.2560.1417" timestamp="1580134363796" />
     <state x="468" y="240" width="670" height="676" key="search.everywhere.popup" timestamp="1579179794349">
       <screen x="0" y="23" width="1680" height="1027" />
     </state>

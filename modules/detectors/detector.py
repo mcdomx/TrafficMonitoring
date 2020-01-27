@@ -25,9 +25,11 @@ class Detector(ABC):
     def MODEL_NAME(self):
         return self._model_name
 
-    def detect(self, frame: np.array) -> (int, np.array, list):
+    def detect(self, frame: np.array, det_objs: set) -> (int, np.array, list):
         """
         Each supported detector must override this method.
+        :frame: np.array) - frame from which to detect objects
+        :det_objs: set - set of object names which should be detected
         Returns frame number, frame and detections
         """
         ...
@@ -35,6 +37,7 @@ class Detector(ABC):
     def get_trained_objects(self) -> set:
         """
         Each supported detector must override this method.
-        :return: set of strings where each string is the name of a trained object
+        :return: set of strings where each string is the name of a trained object. Spaces
+        must be represented with an underscore, '_'.
         """
         ...

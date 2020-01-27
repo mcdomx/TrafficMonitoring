@@ -4,7 +4,7 @@
 
   <!-- Video and Detection Log ROW   -->
   <div class="row" style="height:3vh"></div>
-  <div class="row mt-5 px-1 border border-info" style="height:400px;">
+  <div class="row mt-5 px-1" style="height:400px;">
 
     <!-- TOP LEFT BLOCK -->
     <div class="container col-xs-12 col-s-12 col-6  align-self-center">
@@ -20,35 +20,18 @@
 
   </div> <!-- Video and Detection Log ROW -->
 
-  <!-- ROW  -->
-  <div class="container">
-      <h5>Video Controls</h5>
-      <div class="row">
-        <div class="col align-self-end">
 
-          <a href="{{ url_for('toggle_stream') }}">
-            <button type="button" id="btn_toggle_stream" class="btn btn-success">Stop</button>
-          </a>
-
-          <a href="{{ url_for('change_delay', direction='decrease') }}">
-            <button type="button" id="btn_decrease" class="btn btn-success"> - </button>
-          </a>
-
-          <a href="{{ url_for('change_delay', direction='increase') }}">
-            <button type="button" id="btn_increase" class="btn btn-success"> + </button>
-          </a>
-
-        </div>
-      </div>
-  </div>
-  <!-- END ROW -->
 
   <div class="container col-xs-12 col-s-12 col-6  align-self-center">
     {% include "includes/monitoring_logging.html" %}
   </div>
 
   <div class="container col-xs-12 col-s-12 col-6  align-self-center">
-    {% include "includes/applog.html" %}
+      {% include "includes/video_controls.html" %}
+  </div>
+
+  <div class="container col-xs-12 col-s-12 col-6  align-self-center">
+    {% include "includes/application_log.html" %}
   </div>
 
   {% endblock %}
