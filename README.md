@@ -78,5 +78,4 @@ Currently, only the "imageai" detector is supported:
 	
 
 ### Logging
-The application supports logging to the terminal by default.  Application-wide formatting is used to streamline logging output.  The application also supports a javascript driven logging for debugging purposes.  
-	
+The application supports logging to the terminal by default.  Application-wide formatting is used to streamline logging output.  The application also supports a javascript driven logging for debugging.

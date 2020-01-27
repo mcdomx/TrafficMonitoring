@@ -30,7 +30,7 @@ https://blog.miguelgrinberg.com/post/video-streaming-with-flask
 ### v4.0 - charting
 
 * (planned) add charting to display detection instances over time (https://www.chartjs.org)
-* (planned) streamline front-end
+* (planned) streamline and clean-up front-end
 
 ### FUTURE
 * publish to AWS
