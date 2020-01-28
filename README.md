@@ -22,7 +22,7 @@ The code has been written to allow other models to be used by extending classes 
 2. Start docker on the host machine
 3. Build and execute the Docker container from the project root:
 
-    `docker-compose -up --build`
+    `docker-compose s up --build`
 
 This will build and execute the container.  You can run without building by leaving off the `--build` switch.
 	

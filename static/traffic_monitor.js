@@ -11,20 +11,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setup_buttons();
   setup_log_listing(socket);
-  setup_vid_stats(socket);
+  // setup_vid_stats(socket);
   setup_app_log(socket);
   setup_base_delay(socket);
 
 });
 // ########################  end DOMContentLoaded ########################
 
+
+// GLOBAL SOCKET VARIABLE
 const socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-// sets up stop/start button to respond to click
+
+// SETUP BUTTONS #############################
 function setup_buttons() {
-  document.querySelector('#btn_toggle_stream').onclick = () => {
-    toggle_stream();
-  };
+
+  // document.querySelector('#btn_toggle_stream').onclick = () => {
+  //   toggle_stream();
+  // };
 
   document.querySelector("#btn_toggle_monitoring").onclick = () => {
     toggle_ONOFF("#monitoring_status");
@@ -34,18 +38,20 @@ function setup_buttons() {
     toggle_ONOFF("#logging_status");
   };
 
-} // end setup_buttons()
+}
+// END SETUP BUTTONS #############################
+
 
 // BUTTON TOGGLES #############################
 // will add post to the chat window and set appropriate screen elements
-function toggle_stream() {
-  let button = document.querySelector('#btn_toggle_stream');
-  if (button.textContent==='Stop') {
-    button.textContent = 'Start';
-  } else {
-    button.textContent = 'Stop';
-  }
-} // end toggle_stream()
+// function toggle_stream() {
+//   let button = document.querySelector('#btn_toggle_stream');
+//   if (button.textContent==='Stop') {
+//     button.textContent = 'Start';
+//   } else {
+//     button.textContent = 'Stop';
+//   }
+// } // end toggle_stream()
 
 function toggle_ONOFF(elem_id) {
 
@@ -57,15 +63,11 @@ function toggle_ONOFF(elem_id) {
     elem.innerHTML = 'ON';
   }
 
-  elem.classList.toggle("ON")
+  elem.classList.toggle("ON") // remove ON if exists or add it if it doesnt exist as class
   elem.classList.toggle("OFF")
 
 }
-
 // END BUTTON TOGGLES #############################
-
-
-
 
 
 // LOG LISTING ################################
@@ -146,6 +148,7 @@ function update_log(log_data) {
 } // end function
 // END LOG LISTING ################################
 
+
 // APPLICATION LOG ################################
 function log_text(log_text){
 
@@ -165,34 +168,31 @@ function setup_app_log(socket) {
     log_text(log_text);
   });
 }
-
-
 // END APPLICATION LOG ################################
 
-// VIDEO STATISTICS SIZE ################################
-function setup_vid_stats(socket){
-  socket.on('update_vid_stats', vid_stats => {
-    update_vid_stats(vid_stats);
-  });
-}
 
-
-function update_vid_stats(vid_stats){
-  let json_data = JSON.parse(vid_stats);
-
-  if (json_data.hasOwnProperty('buffer_size')) {
-    let bsize = document.querySelector("#buffer_size");
-    bsize.innerHTML = `${json_data['buffer_size']}`
-  }
-
-  if (json_data.hasOwnProperty('ttl_delay')) {
-    let bsize = document.querySelector("#ttl_delay");
-    bsize.innerHTML = `${json_data['ttl_delay']}`
-  }
-
-}
-
-// END VIDEO STATISTICS SIZE ################################
+// VIDEO STATISTICS ################################
+// function setup_vid_stats(socket){
+//   socket.on('update_vid_stats', vid_stats => {
+//     update_vid_stats(vid_stats);
+//   });
+// }
+//
+// function update_vid_stats(vid_stats){
+//   let json_data = JSON.parse(vid_stats);
+//
+//   if (json_data.hasOwnProperty('buffer_size')) {
+//     let bsize = document.querySelector("#buffer_size");
+//     bsize.innerHTML = `${json_data['buffer_size']}`
+//   }
+//
+//   if (json_data.hasOwnProperty('ttl_delay')) {
+//     let bsize = document.querySelector("#ttl_delay");
+//     bsize.innerHTML = `${json_data['ttl_delay']}`
+//   }
+//
+// }
+// END VIDEO STATISTICS ################################
 
 
 // INFO TEXTS ################################
@@ -206,5 +206,4 @@ function update_base_delay(val) {
   let bdelem = document.querySelector('#base_delay');
   bdelem.innerHTML = val;
 }
-
 // END INFO TEXTS ################################

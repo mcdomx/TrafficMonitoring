@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 import numpy as np
 
 
@@ -25,6 +25,7 @@ class Detector(ABC):
     def MODEL_NAME(self):
         return self._model_name
 
+    @abstractmethod
     def detect(self, frame: np.array, det_objs: set) -> (int, np.array, list):
         """
         Each supported detector must override this method.
@@ -34,6 +35,7 @@ class Detector(ABC):
         """
         ...
 
+    @abstractmethod
     def get_trained_objects(self) -> set:
         """
         Each supported detector must override this method.

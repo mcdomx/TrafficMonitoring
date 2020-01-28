@@ -4,9 +4,16 @@
     <list default="true" id="482d1493-5ee9-4c1b-9091-5ed616a119aa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/version_log.md" beforeDir="false" afterPath="$PROJECT_DIR$/version_log.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/detectors/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/threads/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/threads/logging_thread.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/threads/monitoring_thread.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/threads/thread.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/threads/thread_manager.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/threads/video_capture_thread.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.js" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -70,18 +77,6 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager">
     <configuration name="traffic_detection" type="PythonConfigurationType" factoryName="Python">
       <module name="TrafficMonitoring" />
@@ -106,6 +101,18 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -124,6 +131,7 @@
       <workItem from="1579803999535" duration="2314000" />
       <workItem from="1579882356100" duration="1279000" />
       <workItem from="1579889114540" duration="4281000" />
+      <workItem from="1580221969026" duration="1711000" />
     </task>
     <servers />
   </component>
