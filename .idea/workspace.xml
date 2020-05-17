@@ -5,14 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/files/camlogs.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/files/camlogs.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/detectors/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/detectors/detector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/logging_thread.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/monitoring_thread.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/thread.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/thread_manager.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/modules/threads/video_capture_thread.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/traffic_monitor.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/traffic_monitor.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +28,6 @@
   <component name="ProjectId" id="1VvyBYhR1xtLfFsESGs61Y28YK1" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -101,18 +92,6 @@
       <method v="2" />
     </configuration>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -131,25 +110,26 @@
       <workItem from="1579803999535" duration="2314000" />
       <workItem from="1579882356100" duration="1279000" />
       <workItem from="1579889114540" duration="4281000" />
-      <workItem from="1580221969026" duration="1711000" />
+      <workItem from="1580221969026" duration="2077000" />
+      <workItem from="1584314517309" duration="32000" />
+      <workItem from="1589725003707" duration="1357000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="267" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1579106831638">
